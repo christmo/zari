@@ -38,3 +38,13 @@ Lista de dominios y subdominios:
 		- Ayuda en tienda
 		- Análisis de sentimiento
 		- Redes sociales
+
+# RUN
+
+```zsh
+gcloud functions deploy zari_webhook --runtime python38 --trigger-http --allow-unauthenticated --set-env-vars DB_USER=postgres,DB_PASS=postgres,DB_NAME=postgres,DB_HOST=IP:5432
+```
+
+docker run --name postgres -e POSTGRES_PASSWORD=postgres -d postgres
+
+DB_USER=postgres DB_PASS=postgres DB_NAME=postgres DB_HOST=127.0.01:5433 functions-framework --target=zari_webhook
