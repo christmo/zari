@@ -24,7 +24,7 @@ def consultar_pantalones(request):
     talla = parameters["talla"][0]
     color = parameters["color"][0]
     print(f"{nombre} - talla: {talla} - color: {color}")
-    filter = Producto(nombre, talla, color)
+    filter = Producto(nombre, talla, color, 1)
     products = query.productos(filter)
     print(f"Numero de productos: {len(products)}")
     text = DFResponse().cards(products)

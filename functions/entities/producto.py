@@ -2,10 +2,11 @@ class Producto:
     precio = 0
     image = ''
     
-    def __init__(self, nombre, talla, color):
+    def __init__(self, nombre, talla, color, tipo):
         self.nombre = nombre
         self.talla = talla
         self.color = color
+        self.tipo = tipo # 1 es pantalones
 
     def toCard(self):
         card = {}

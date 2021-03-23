@@ -16,9 +16,9 @@ def productos(producto):
         from producto p, categoria_producto c
         where p.id_categoria_producto = c.id_categoria_producto """
     if producto != None:
-        sql = sql + "and c.id_tipo_producto = 1 "
-        if producto.nombre != None:
-            sql = sql + f"and lower(p.nombre_producto) like lower('%{producto.nombre}%') "
+        sql = sql + f"and c.id_tipo_producto = {producto.tipo} "
+        #if producto.nombre != None:
+        #    sql = sql + f"and lower(p.nombre_producto) like lower('%{producto.nombre}%') "
         if producto.talla != None:
             sql = sql + f"and p.talla = '{producto.talla}' "
         if producto.color != None:
@@ -29,7 +29,7 @@ def productos(producto):
     with db.connect() as conn:
         productos = conn.execute(sql).fetchall()
         for prod in productos:
-            p = Producto(prod[0], prod[1], prod[2])
+            p = Producto(prod[0], prod[1], prod[2], producto.tipo)
             p.precio = prod[3]
             p.image = prod[4]
             products.append(p)
