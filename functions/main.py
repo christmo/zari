@@ -1,32 +1,13 @@
+from entities.df_text import DFText
 import json
+from typing import Text
 from telegram import impl as telegram
 from general import impl as general
-from database import conexion as pgsql
 
 def respuesta(message):
-    text = []
-    text.append(message)
-
-    text_wrapper = {}
-    text_wrapper["text"] = text
-
-    fullfillment = []
-    fullfillment_message = {}
-    fullfillment_message["text"] = text_wrapper
-    fullfillment.append(fullfillment_message)
-
     response = {}
-    response["fulfillmentMessages"] = fullfillment
+    response["fulfillmentMessages"] = DFText(message).toText()
     return json.dumps(response)
-
-def db():
-    db = pgsql.init_connection_engine()
-    with db.connect() as conn:
-        usuarios = conn.execute(
-            "SELECT * FROM usuarios "
-        ).fetchall()
-        for usuario in usuarios:
-            print(usuario)
 
 def zari_webhook(request):
     """
@@ -40,11 +21,10 @@ def zari_webhook(request):
         #text = request_json["queryResult"]["queryText"]
         source = request_json["originalDetectIntentRequest"]["source"]
         if source == "telegram":
-            text = telegram.gateway(request_json)
+            return telegram.gateway(request_json)
         else:
-            text = general.gateway(request_json)
+            return general.gateway(request_json)
     else:
         text = "Respuesta sin procesar"
-        db()
 
     return respuesta(text)
