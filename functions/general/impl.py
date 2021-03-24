@@ -14,21 +14,45 @@ def saludo(request):
     return text
 
 
+def parameters(request):
+    parameters = request["queryResult"]["parameters"]
+    nombre = None
+    talla = None
+    color = None
+    if "productos" in parameters:
+        nombre = parameters["productos"]
+    if "talla" in parameters:
+        talla = parameters["talla"]
+    if "color" in parameters:
+        color = parameters["color"]
+    return nombre, talla, color
+
+
 def consultar_pantalones(request):
     """
         Procesa la respuesta del Intent Pantalones
     """
-    parameters = request["queryResult"]["parameters"]
     #bot_response = request["queryResult"]["fulfillmentText"]
-    nombre = parameters["Productos"][0]
-    talla = parameters["talla"][0]
-    color = parameters["color"][0]
+    nombre, talla, color = parameters(request)
     print(f"{nombre} - talla: {talla} - color: {color}")
     filter = Producto(nombre, talla, color, 1)
     products = query.productos(filter)
     print(f"Numero de productos: {len(products)}")
-    text = DFResponse().cards(products)
-    print(text)
+    text = DFResponse().products_text(products)
+    return text
+
+
+def consultar_camisetas(request):
+    """
+        Procesa la respuesta del Intent Camisetas
+    """
+    #bot_response = request["queryResult"]["fulfillmentText"]
+    nombre, talla, color = parameters(request)
+    print(f"nombre: {nombre} - talla: {talla} - color: {color}")
+    filter = Producto(nombre, talla, color, 2)
+    products = query.productos(filter)
+    print(f"Numero de productos: {len(products)}")
+    text = DFResponse().products_text(products)
     return text
 
 
@@ -44,4 +68,6 @@ def gateway(request):
             response = saludo(request)
         if intent == "PeticionPantalones":
             response = consultar_pantalones(request)
+        if intent == "PeticionCamiseta":
+            response = consultar_camisetas(request)
     return response

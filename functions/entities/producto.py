@@ -1,6 +1,7 @@
 class Producto:
     precio = 0
     image = ''
+    descripcion = ''
     
     def __init__(self, nombre, talla, color, tipo):
         self.nombre = nombre
@@ -11,7 +12,7 @@ class Producto:
     def toCard(self):
         card = {}
         card["title"] = self.nombre
-        card["subtitle"] = "self.nombre"
+        card["subtitle"] = f"{self.descripcion} - {self.precio}"
         card["imageUri"] = self.image
 
         buttons = []

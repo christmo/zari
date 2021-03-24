@@ -6,7 +6,7 @@ from general import impl as general
 
 def respuesta(message):
     response = {}
-    response["fulfillmentMessages"] = DFText(message).toText()
+    response["fulfillmentMessages"] = DFText().toText(message)
     return json.dumps(response)
 
 def zari_webhook(request):
