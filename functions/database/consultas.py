@@ -25,7 +25,7 @@ and t.id_tipo_producto = c.id_tipo_producto """
             p = Producto(prod[0], prod[1], prod[2], producto.tipo)
             p.precio = prod[3]
             p.image = prod[4]
-            p.description = prod[6]
+            p.descripcion = prod[6]
             products.append(p)
 
     return products

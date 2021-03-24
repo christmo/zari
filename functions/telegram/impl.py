@@ -35,7 +35,7 @@ def consultar_pantalones(request):
     """
     #bot_response = request["queryResult"]["fulfillmentText"]
     nombre, talla, color = parameters(request)
-    print(f"{nombre} - talla: {talla} - color: {color}")
+    print(f"nombre: {nombre} - talla: {talla} - color: {color}")
     filter = Producto(nombre, talla, color, 1)
     products = query.productos(filter)
     print(f"Numero de productos: {len(products)}")
