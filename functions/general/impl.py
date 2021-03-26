@@ -1,3 +1,4 @@
+from entities.df_request import get_name, get_session, get_username
 from entities.df_response import DFResponse
 from entities.producto import Producto
 from database import consultas as query
@@ -7,7 +8,6 @@ def saludo(request):
     """
         Procesa la respuesta del Intent Welcome de saludo
     """
-    # TODO: consultar respuestas desde BD sin nombre
     bot_response = request["queryResult"]["fulfillmentText"]
     text = DFResponse().text(bot_response.replace('{name}', ''))
     print(text)

@@ -1,3 +1,4 @@
+from entities.df_request import get_name, get_session, get_username
 from entities.df_response import DFResponse
 from entities.producto import Producto
 from database import consultas as query
@@ -7,10 +8,22 @@ def saludo(request):
     """
         Procesa la respuesta del Intent Welcome de saludo
     """
-    name = request["originalDetectIntentRequest"]["payload"]["data"]["from"]["first_name"]
     bot_response = request["queryResult"]["fulfillmentText"]
-    # TODO: consultar respuestas desde BD con nombre
-    text = DFResponse().text(bot_response.replace('{name}', name))
+    name = get_name(request)
+    username = get_username(request)
+    if username != None:
+        usuario = query.usuario(username)
+        if len(usuario.nombre) > 1:
+            text = DFResponse().text_user_context(
+                bot_response.replace('{name}', usuario.nombre),
+                usuario,
+                get_session(request)
+            )
+        else:
+            text = DFResponse().text(bot_response.replace('{name}', name))
+    else:
+        text = DFResponse().text(bot_response.replace('{name}', name))
+
     print(text)
     return text
 
