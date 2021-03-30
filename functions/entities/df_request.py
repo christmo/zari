@@ -1,3 +1,6 @@
+from entities.producto import Producto
+
+
 def get_username(request):
     if "payload" in request["originalDetectIntentRequest"]:
         if "data" in request["originalDetectIntentRequest"]["payload"]:
@@ -6,7 +9,7 @@ def get_username(request):
                     return request["originalDetectIntentRequest"]["payload"]["data"]["from"]["username"]
                 if "id" in request["originalDetectIntentRequest"]["payload"]["data"]["from"]:
                     return request["originalDetectIntentRequest"]["payload"]["data"]["from"]["id"]
-    return None
+    return "christmo"
 
 
 def get_name(request):
@@ -22,3 +25,29 @@ def get_session(request):
     if "session" in request:
         return request["session"]
     return None
+
+
+def get_parameter(request, param):
+    parameters = request["queryResult"]["parameters"]
+    if param in parameters:
+        return parameters[param]
+    return None
+
+
+def get_product_from_params(request) -> Producto:
+    nombre, talla, color = param_nombre_talla_color(request)
+    return Producto(nombre, talla, color, nombre)
+
+
+def param_nombre_talla_color(request):
+    nombre = get_parameter(request, "producto")
+    talla = get_parameter(request, "talla")
+    color = get_parameter(request, "color")
+    return nombre, talla, color
+
+
+def param_product_id_costo(request):
+    producto = get_parameter(request, "producto")
+    id_producto = get_parameter(request, "id_producto")
+    costo = get_parameter(request, "costo")
+    return producto, id_producto, costo

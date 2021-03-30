@@ -1,3 +1,4 @@
+from entities.df_request import get_session
 from entities.df_text import DFText
 from entities.df_context import DFContext
 import json
@@ -6,31 +7,34 @@ import json
 class DFResponse:
     response = {}
 
-    def text(self, message):
-        self.response["fulfillmentMessages"] = DFText().toText(message)
+    def __init__(self, request):
+        self.request = request
+
+    def to_json(self):
+        print(self.response)
         return json.dumps(self.response)
 
-    def text_user_context(self, message, usuario, session):
+    def text(self, message):
         self.response["fulfillmentMessages"] = DFText().toText(message)
+
+    def context_usuario(self, usuario):
         parameters = {}
         parameters["nombre"] = usuario.nombre
         parameters["apellido"] = usuario.apellido
+        parameters["usuario"] = usuario.username
         parameters["talla_calzado"] = str(usuario.talla_calzado)
         parameters["talla_pantalon"] = str(usuario.talla_pantalon)
         parameters["talla_polera"] = str(usuario.talla_polera)
-        parameters["genero"] = usuario.genero
-        self.response["outputContexts"] = DFContext().addContext(
-            parameters, session
+        parameters["genero"] = usuario.get_genero()
+        self.response["outputContexts"] = DFContext().addUsuarioContext(
+            parameters, get_session(self.request)
         )
-
-        return json.dumps(self.response)
 
     def cards(self, products):
         fullfillment = []
         for prod in products:
             fullfillment.append(prod.toCard())
         self.response["fulfillmentMessages"] = fullfillment
-        return json.dumps(self.response)
 
     def products_text(self, products):
         fulfillment = []
@@ -40,4 +44,3 @@ class DFResponse:
                 fulfillment
             )
         self.response["fulfillmentMessages"] = fulfillment
-        return json.dumps(self.response)
