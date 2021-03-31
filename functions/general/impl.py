@@ -1,5 +1,5 @@
 from entities.df_context import get_user_context
-from entities.df_request import get_name, get_product_from_params, get_session, get_username, param_nombre_talla_color, param_product_id_costo
+from entities.df_request import get_product_from_params
 from entities.df_response import DFResponse
 from entities.producto import Producto
 from database import consultas as query
@@ -60,12 +60,16 @@ def agregar_producto(request):
         Agregar producto al carrito de compras
     """
     response = DFResponse(request)
-    usuario = ''
-    carrito = 0
-    producto, id_producto, costo = param_product_id_costo(request)
-    #costo = query.costo_producto(id_producto)
-    bot_response = request["queryResult"]["fulfillmentText"]
-    response.text(f"{bot_response} - {id_producto} - {costo}")
+    user = get_user_context(request)
+    if user != None:
+        producto = get_product_from_params(request)
+        cesta = 0
+        #costo = query.costo_producto(id_producto)
+        bot_response = request["queryResult"]["fulfillmentText"]
+        response.text(f"Se agregar producto - código: {producto.codigo} - costo: {producto.costo}")
+        response.context_cesta()
+    else:
+        response.register_event()
     return response.to_json()
 
 

@@ -1,14 +1,20 @@
 
 class Usuario:
-    nombre = ''
-    apellido = ''
-    talla_calzado = ''
-    talla_pantalon = ''
-    talla_polera = ''
+    __nombre = ''
+    __apellido = ''
+    __talla_calzado = ''
+    __talla_pantalon = ''
+    __talla_polera = ''
     __genero = 0
 
     def __init__(self, username):
-        self.username = username
+        self.__username = username
+
+    def __call__(self):
+        print("username {self.__username}, nombre {self.__nombre},  \
+            apellido {self.__apellido}, talla_calzado {self.__talla_calzado},  \
+            talla_pantalon {self.__talla_pantalon}, talla_polera {self.__talla_polera},  \
+            genero {self.__genero}")
 
     def genero(self, genero):
         if "hombre" == genero or genero == 1 or "M" == genero:
@@ -20,5 +26,44 @@ class Usuario:
         if "niña" == genero or genero == 5 or "NF" == genero:
             self.__genero = 5
 
+    def nombre(self, nombre):
+        self.__nombre = nombre
+
+    def apellido(self, apellido):
+        self.__apellido = apellido
+
+    def talla_calzado(self, talla_calzado):
+        self.__talla_calzado = talla_calzado
+
+    def talla_pantalon(self, talla_pantalon):
+        self.__talla_pantalon = talla_pantalon
+
+    def talla_polera(self, talla_polera):
+        self.__talla_polera = talla_polera
+
     def get_genero(self):
         return self.__genero
+
+    def get_nombre(self):
+        return self.__nombre
+
+    def get_apellido(self):
+        return self.__apellido
+
+    def get_talla_calzado(self):
+        return self.__talla_calzado
+
+    def get_talla_pantalon(self):
+        return self.__talla_pantalon
+
+    def get_talla_polera(self):
+        return self.__talla_polera
+
+    def get_username(self):
+        return self.__username
+
+    def is_full(self):
+        return len(self.__username) > 0 and len(self.__nombre) > 0 \
+            and len(self.__apellido) > 0 and len(self.__talla_calzado) > 0 \
+            and len(self.__talla_pantalon) > 0 and len(self.__talla_polera) > 0 \
+            and self.__genero > 0

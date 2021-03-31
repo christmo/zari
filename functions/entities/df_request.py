@@ -1,7 +1,7 @@
 from entities.producto import Producto
 
 
-def get_username(request):
+def get_username_telegram(request):
     if "payload" in request["originalDetectIntentRequest"]:
         if "data" in request["originalDetectIntentRequest"]["payload"]:
             if "from" in request["originalDetectIntentRequest"]["payload"]["data"]:
@@ -9,7 +9,7 @@ def get_username(request):
                     return request["originalDetectIntentRequest"]["payload"]["data"]["from"]["username"]
                 if "id" in request["originalDetectIntentRequest"]["payload"]["data"]["from"]:
                     return request["originalDetectIntentRequest"]["payload"]["data"]["from"]["id"]
-    return "christmo"
+    return None
 
 
 def get_name(request):
@@ -36,7 +36,11 @@ def get_parameter(request, param):
 
 def get_product_from_params(request) -> Producto:
     nombre, talla, color = param_nombre_talla_color(request)
-    return Producto(nombre, talla, color, nombre)
+    producto, id_producto, costo = param_product_id_costo(request)
+    p = Producto(nombre, talla, color, producto)
+    p.codigo = id_producto
+    p.costo = costo
+    return p
 
 
 def param_nombre_talla_color(request):

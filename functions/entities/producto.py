@@ -4,8 +4,9 @@ class Producto:
     __genero = 0
     descripcion = ''
     codigo = 0
+    costo = 0
 
-    def tipo_producto(self, tipo) -> int:
+    def __tipo_producto(self, tipo) -> int:
         if "pantalones" == tipo or 1 == tipo:
             return 1
         if "camiseta" == tipo or 2 == tipo:
@@ -14,11 +15,11 @@ class Producto:
 
     def __init__(self, nombre, talla, color, tipo):
         self.nombre = nombre
-        self.talla = self.convertir_talla(talla)
+        self.talla = self.__convertir_talla(talla)
         self.color = color
-        self.tipo = self.tipo_producto(tipo)
+        self.tipo = self.__tipo_producto(tipo)
 
-    def convertir_talla(self, talla):
+    def __convertir_talla(self, talla):
         """
             TODO: Crear funcion que convierta las tallas desde Numero a Letra,
             para buscar en la base de datos como Texto

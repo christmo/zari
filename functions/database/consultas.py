@@ -2,6 +2,7 @@ from entities.producto import Producto
 from entities.usuario import Usuario
 from database import conexion as pgsql
 
+
 def usuario(username):
     sql = f"""
 select u.nombre, u.apellido, u.talla_calzado, u.talla_pantalon, u.talla_polera, u.genero
@@ -9,21 +10,23 @@ from usuario u
 where estado = 'ACTIVO'
 and telegram = '{username}' """
     print(sql)
-    user = Usuario(username)
     db = pgsql.init_connection_engine()
     with db.connect() as conn:
         u = conn.execute(sql).fetchone()
         if u != None:
-            user.nombre = u[0]
-            user.apellido = u[1]
-            user.talla_calzado = u[2]
-            user.talla_pantalon = u[3]
-            user.talla_polera = u[4]
+            user = Usuario(username)
+            user.nombre(u[0])
+            user.apellido(u[1])
+            user.talla_calzado(u[2])
+            user.talla_pantalon(u[3])
+            user.talla_polera(u[4])
             user.genero(u[5])
-        
-    return user
+            return user
 
-def productos(producto):
+    return None
+
+
+def productos(producto: Producto):
     sql = """
 select p.nombre_producto, p.talla, p.color, TO_NUMBER(p.precio, 'L99999.99') precio, p.url_imagen, c.descripcion, 
 t.descripcion, p.id_producto, p.id_genero
@@ -40,7 +43,7 @@ and p.precio is not null """
         if producto.color != None:
             sql = sql + f"and p.color = '{producto.color}' "
         if producto.get_genero() != None:
-            sql = sql + f"and p.id_genero = '{producto.get_genero()}' "
+            sql = sql + f"and p.id_genero = {producto.get_genero()} "
     print(sql)
     products = []
     db = pgsql.init_connection_engine()
