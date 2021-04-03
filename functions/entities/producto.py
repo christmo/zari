@@ -27,6 +27,7 @@ class Producto:
         # if talla not in ('L','M','S','XS','XL','XXS', 'XXL'):
         return talla
 
+    #@property
     def genero(self, genero):
         if "hombre" == genero or genero == 1 or "M" == genero:
             self.__genero = 1
@@ -37,6 +38,7 @@ class Producto:
         if "niña" == genero or genero == 5 or "NF" == genero:
             self.__genero = 5
     
+    #@genero.getter
     def get_genero(self) -> int:
         return self.__genero
 

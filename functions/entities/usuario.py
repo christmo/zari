@@ -6,6 +6,7 @@ class Usuario:
     __talla_pantalon = ''
     __talla_polera = ''
     __genero = 0
+    __id = 0
 
     def __init__(self, username):
         self.__username = username
@@ -41,6 +42,9 @@ class Usuario:
     def talla_polera(self, talla_polera):
         self.__talla_polera = talla_polera
 
+    def id(self, id_usuario):
+        self.__id = id_usuario
+
     def get_genero(self):
         return self.__genero
 
@@ -62,8 +66,11 @@ class Usuario:
     def get_username(self):
         return self.__username
 
+    def get_id(self):
+        return self.__id
+
     def is_full(self):
         return len(self.__username) > 0 and len(self.__nombre) > 0 \
             and len(self.__apellido) > 0 and len(self.__talla_calzado) > 0 \
             and len(self.__talla_pantalon) > 0 and len(self.__talla_polera) > 0 \
-            and self.__genero > 0
+            and self.__genero > 0 and self.__id > 0

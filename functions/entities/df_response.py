@@ -1,5 +1,7 @@
+from entities.car_detalle import CarDetalle
+from entities.carrito import Carrito
 from entities.usuario import Usuario
-from entities.df_context import add_user_context
+from entities.df_context import add_car_context, add_user_context
 from entities.df_request import get_session
 from entities.df_text import DFText
 import json
@@ -27,13 +29,18 @@ class DFResponse:
         parameters["talla_pantalon"] = str(usuario.get_talla_pantalon())
         parameters["talla_polera"] = str(usuario.get_talla_polera())
         parameters["genero"] = usuario.get_genero()
+        parameters["id_usuario"] = usuario.get_id()
         self.response["outputContexts"] = add_user_context(
             parameters, get_session(self.request)
         )
 
-    def context_cesta(self):
+    def context_shoppingcar(self, car: Carrito):
         parameters = {}
-        self.response["outputContexts"] = add_user_context(
+        parameters["car"] = car.id_car
+        parameters["car_total"] = float(car.total)
+        parameters["car_numero_items"] = len(car.detalles)
+        parameters["car_items"] = [prod.id_producto for prod in car.detalles]
+        self.response["outputContexts"] = add_car_context(
             parameters, get_session(self.request)
         )
 

@@ -12,6 +12,15 @@ def add_user_context(parameters, session):
     output.append(context)
     return output
 
+def add_car_context(parameters, session):
+    output = []
+    context = {}
+    context["name"] = f'{session}/contexts/__shoppingcar__'
+    context["lifespanCount"] = 8
+    context["parameters"] = parameters
+    output.append(context)
+    return output
+
 
 def get_user_context(request) -> Usuario:
     params = get_context_parameter(request, "__usuario__")
@@ -60,6 +69,9 @@ def __load_user_from_params(params) -> Usuario:
         if "apellido" in params and len(params["apellido"]) > 0:
             apellido = params["apellido"]
             user.apellido(apellido)
+        if "id_usuario" in params and params["id_usuario"] > 0:
+            id = params["id_usuario"]
+            user.id(id)
     return user
 
 

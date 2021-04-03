@@ -5,7 +5,7 @@ from database import conexion as pgsql
 
 def usuario(username):
     sql = f"""
-select u.nombre, u.apellido, u.talla_calzado, u.talla_pantalon, u.talla_polera, u.genero
+select u.nombre, u.apellido, u.talla_calzado, u.talla_pantalon, u.talla_polera, u.genero, u.id_usuario
 from usuario u
 where estado = 'ACTIVO'
 and telegram = '{username}' """
@@ -21,6 +21,7 @@ and telegram = '{username}' """
             user.talla_pantalon(u[3])
             user.talla_polera(u[4])
             user.genero(u[5])
+            user.id(u[6])
             return user
 
     return None
