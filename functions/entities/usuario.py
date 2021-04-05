@@ -1,4 +1,7 @@
 
+from entities.db_usuario import DBUsuario
+
+
 class Usuario:
     __nombre = ''
     __apellido = ''
@@ -18,14 +21,17 @@ class Usuario:
             genero {self.__genero}")
 
     def genero(self, genero):
-        if "hombre" == genero or genero == 1 or "M" == genero:
-            self.__genero = 1
-        if "mujer" == genero or genero == 2 or "F" == genero:
-            self.__genero = 2
-        if "niño" == genero or genero == 4 or "NM" == genero:
-            self.__genero = 4
-        if "niña" == genero or genero == 5 or "NF" == genero:
-            self.__genero = 5
+        if genero != None:
+            if "hombre" == genero or genero == 1 or "M" == genero:
+                self.__genero = 1
+            if "mujer" == genero or genero == 2 or "F" == genero:
+                self.__genero = 2
+            if "niño" == genero or genero == 4 or "NM" == genero:
+                self.__genero = 4
+            if "niña" == genero or genero == 5 or "NF" == genero:
+                self.__genero = 5
+        else:
+            self.__genero = 0
 
     def nombre(self, nombre):
         self.__nombre = nombre
@@ -47,6 +53,17 @@ class Usuario:
 
     def get_genero(self):
         return self.__genero
+
+    def get_genero_letra(self):
+        if self.__genero == 1:
+            return "M"
+        if self.__genero == 2:
+            return "F"
+        if self.__genero == 4:
+            return "NM"
+        if self.__genero == 5:
+            return "NF"
+        return None
 
     def get_nombre(self):
         return self.__nombre
@@ -74,3 +91,21 @@ class Usuario:
             and len(self.__apellido) > 0 and len(self.__talla_calzado) > 0 \
             and len(self.__talla_pantalon) > 0 and len(self.__talla_polera) > 0 \
             and self.__genero > 0 and self.__id > 0
+
+    def __repr__(self):
+        return f"username: {self.__username} nombre: {self.__nombre} \
+            apellido: {self.__apellido} talla_calzado: {self.__talla_calzado} \
+            talla_pantalon: {self.__talla_pantalon} talla_polera: {self.__talla_polera} \
+            genero: {self.__genero} id: {self.__id}"
+
+    @classmethod
+    def parse_usuario(cls, user: DBUsuario):
+        usuario = cls(user.telegram)
+        usuario.id(user.id_usuario)
+        usuario.nombre(user.nombre)
+        usuario.apellido(user.apellido)
+        usuario.talla_pantalon(user.talla_pantalon)
+        usuario.talla_polera(user.talla_polera)
+        usuario.talla_calzado(user.talla_calzado)
+        usuario.genero(user.genero)
+        return usuario

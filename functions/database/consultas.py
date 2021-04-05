@@ -1,3 +1,4 @@
+from entities.carrito import Carrito
 from entities.producto import Producto
 from entities.usuario import Usuario
 from database import conexion as pgsql
@@ -52,6 +53,34 @@ and p.precio is not null """
         productos = conn.execute(sql).fetchall()
         for prod in productos:
             p = Producto(prod[0], prod[1], prod[2], producto.tipo)
+            p.precio = prod[3]
+            p.image = prod[4]
+            p.descripcion = prod[6]
+            p.codigo = prod[7]
+            p.genero(prod[8])
+            products.append(p)
+
+    return products
+
+def shopping_cart(user: Usuario):
+    sql = f"""
+select p.nombre_producto, p.talla, p.color, TO_NUMBER(p.precio, 'L99999.99') precio, p.url_imagen, cp.descripcion,
+tp.descripcion, p.id_producto, p.id_genero
+from carrito c, usuario u, car_detalle d, producto p, categoria_producto cp, tipo_producto tp
+where u.id_usuario = c.usuario
+and c.id_car = d.id_car
+and d.id_producto = p.id_producto
+and p.id_tipo_producto = tp.id_tipo_producto
+and p.id_categoria_producto = cp.id_categoria_producto
+and c.estado = 'ACTIVO'
+and u.id_usuario = {user.get_id()}
+    """
+    products = []
+    db = pgsql.init_connection_engine()
+    with db.connect() as conn:
+        productos = conn.execute(sql).fetchall()
+        for prod in productos:
+            p = Producto(prod[0], prod[1], prod[2], prod[6])
             p.precio = prod[3]
             p.image = prod[4]
             p.descripcion = prod[6]

@@ -7,9 +7,9 @@ class Producto:
     costo = 0
 
     def __tipo_producto(self, tipo) -> int:
-        if "pantalones" == tipo or 1 == tipo:
+        if "pantalones" == tipo or 1 == tipo or "pantalon" == tipo:
             return 1
-        if "camiseta" == tipo or 2 == tipo:
+        if "camiseta" == tipo or 2 == tipo or "polera" == tipo:
             return 2
         return 0
 
@@ -27,7 +27,7 @@ class Producto:
         # if talla not in ('L','M','S','XS','XL','XXS', 'XXL'):
         return talla
 
-    #@property
+    # @property
     def genero(self, genero):
         if "hombre" == genero or genero == 1 or "M" == genero:
             self.__genero = 1
@@ -37,10 +37,21 @@ class Producto:
             self.__genero = 4
         if "niña" == genero or genero == 5 or "NF" == genero:
             self.__genero = 5
-    
-    #@genero.getter
+
+    # @genero.getter
     def get_genero(self) -> int:
         return self.__genero
+
+    def get_genero_texto(self):
+        if self.__genero == 1:
+            return "hombre"
+        if self.__genero == 2:
+            return "mujer"
+        if self.__genero == 4:
+            return "niño"
+        if self.__genero == 5:
+            return "niña"
+        return "No se para quien busca?"
 
     def toCard(self):
         card = {}
@@ -59,3 +70,6 @@ class Producto:
         wrapper["card"] = card
         wrapper["platform"] = "TELEGRAM"
         return wrapper
+
+    def __repr__(self):
+        return f"nombre: {self.nombre} - talla: {self.talla} - color: {self.color} - tipo: {self.tipo} - genero: {self.__genero}"

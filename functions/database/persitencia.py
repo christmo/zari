@@ -1,3 +1,4 @@
+from entities.db_usuario import DBUsuario
 from entities.producto import Producto
 from entities.usuario import Usuario
 from entities.car_detalle import CarDetalle
@@ -42,3 +43,16 @@ def save_shopping_car(user: Usuario, producto: Producto) -> Carrito:
     car.detalles = detalles
 
     return car
+
+
+def save_usuario(user: DBUsuario):
+    # pylint: disable=maybe-no-member
+    engine = pgsql.init_connection_engine()
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    session.add(user)
+    user = session.query(DBUsuario).filter(
+        and_(DBUsuario.telegram == user.telegram)
+    ).first()
+    session.commit()
+    return user

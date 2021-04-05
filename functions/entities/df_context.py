@@ -1,3 +1,5 @@
+from entities.car_detalle import CarDetalle
+from entities.carrito import Carrito
 from database.consultas import usuario
 from entities.usuario import Usuario
 from entities.df_request import get_parameter, get_username_telegram
@@ -12,10 +14,11 @@ def add_user_context(parameters, session):
     output.append(context)
     return output
 
+
 def add_car_context(parameters, session):
     output = []
     context = {}
-    context["name"] = f'{session}/contexts/__shoppingcar__'
+    context["name"] = f'{session}/contexts/__shoppingcart__'
     context["lifespanCount"] = 8
     context["parameters"] = parameters
     output.append(context)
@@ -26,7 +29,7 @@ def get_user_context(request) -> Usuario:
     params = get_context_parameter(request, "__usuario__")
     if params != None:
         user = __load_user_from_params(params)
-        if user.is_full():
+        if user != None and user.is_full():
             print("Usuario full por contexto __usuario__")
             return user
 
@@ -40,7 +43,7 @@ def get_user_context(request) -> Usuario:
     username = get_username_telegram(request)
     if username != None:
         user = usuario(username)
-        if user.is_full():
+        if user != None and user.is_full():
             print("Usuario full por consulta en BD usuario de telegram")
             return user
     print("Usuario no encontrado en en contexto, parametros, payload telegram redireccionar a intent de Presentacion")
@@ -51,7 +54,7 @@ def __load_user_from_params(params) -> Usuario:
     if "usuario" in params and len(params["usuario"]) > 0:
         username = params["usuario"]
         user = Usuario(username)
-        if "genero" in params and params["genero"] > 0:
+        if "genero" in params:
             genero = params["genero"]
             user.genero(genero)
         if "talla_polera" in params and len(params["talla_polera"]) > 0:
@@ -72,7 +75,8 @@ def __load_user_from_params(params) -> Usuario:
         if "id_usuario" in params and params["id_usuario"] > 0:
             id = params["id_usuario"]
             user.id(id)
-    return user
+        return user
+    return None
 
 
 def get_context_parameter(request, context_name):
@@ -83,4 +87,17 @@ def get_context_parameter(request, context_name):
         context_filtered = list(filter_context)
         if len(context_filtered) == 1:
             return context_filtered[0]["parameters"]
+    return None
+
+
+def get_carrito_context(request) -> Carrito:
+    params = get_context_parameter(request, "__shoppingcart__")
+    if params != None:
+        car = Carrito()
+        id_car = params["car"]
+        total = params["car_total"]
+        detalles = params["car_items"]
+        car = Carrito(id_car=id_car, total=total)
+        car.detalles = [CarDetalle(id_det=id) for id in detalles]
+        return car
     return None

@@ -1,3 +1,4 @@
+from entities.producto import Producto
 from entities.car_detalle import CarDetalle
 from entities.carrito import Carrito
 from entities.usuario import Usuario
@@ -12,6 +13,7 @@ class DFResponse:
 
     def __init__(self, request):
         self.request = request
+        self.response = {}
 
     def to_json(self):
         print(self.response)
@@ -21,18 +23,21 @@ class DFResponse:
         self.response["fulfillmentMessages"] = DFText().toText(message)
 
     def context_usuario(self, usuario: Usuario):
-        parameters = {}
-        parameters["nombre"] = usuario.get_nombre()
-        parameters["apellido"] = usuario.get_apellido()
-        parameters["usuario"] = usuario.get_username()
-        parameters["talla_calzado"] = str(usuario.get_talla_calzado())
-        parameters["talla_pantalon"] = str(usuario.get_talla_pantalon())
-        parameters["talla_polera"] = str(usuario.get_talla_polera())
-        parameters["genero"] = usuario.get_genero()
-        parameters["id_usuario"] = usuario.get_id()
-        self.response["outputContexts"] = add_user_context(
-            parameters, get_session(self.request)
-        )
+        if usuario != None:
+            parameters = {}
+            parameters["nombre"] = usuario.get_nombre()
+            parameters["apellido"] = usuario.get_apellido()
+            parameters["usuario"] = usuario.get_username()
+            parameters["talla_calzado"] = str(usuario.get_talla_calzado())
+            parameters["talla_pantalon"] = str(usuario.get_talla_pantalon())
+            parameters["talla_polera"] = str(usuario.get_talla_polera())
+            parameters["genero"] = usuario.get_genero()
+            parameters["id_usuario"] = usuario.get_id()
+            self.response["outputContexts"] = add_user_context(
+                parameters, get_session(self.request)
+            )
+        else:
+            print("No hay usuario para poner en contexto __usuario__")
 
     def context_shoppingcar(self, car: Carrito):
         parameters = {}
@@ -54,9 +59,26 @@ class DFResponse:
         fulfillment = []
         for prod in products:
             DFText().addItem(
-                f"{prod.nombre} - {prod.talla} - {prod.precio} - {prod.descripcion}",
+                f"{prod.codigo} - {prod.nombre} - {prod.talla} - {prod.precio} - {prod.descripcion}",
                 fulfillment
             )
+        self.response["fulfillmentMessages"] = fulfillment
+
+    def shopping_cart_text(self, products):
+        fulfillment = []
+        total = 0
+        numero = 0
+        for prod in products:
+            DFText().addItem(
+                f"{prod.codigo} - {prod.nombre} - {prod.talla} - {prod.precio} - {prod.descripcion}",
+                fulfillment
+            )
+            total += float(prod.precio)
+            numero += 1
+        DFText().addItem(
+            f"En tu carrito tienes {numero} productos por un total de {total}€",
+            fulfillment
+        )
         self.response["fulfillmentMessages"] = fulfillment
 
     def register_event(self):
@@ -64,5 +86,25 @@ class DFResponse:
         followup["name"] = "register-event"
         parameters = {}
         # parameters[""]
+        followup["parameters"] = parameters
+        self.response["followupEventInput"] = followup
+
+    def presentarse_event(self):
+        followup = {}
+        followup["name"] = "presentarse_event"
+        parameters = {}
+        # parameters[""]
+        followup["parameters"] = parameters
+        self.response["followupEventInput"] = followup
+
+    def talla_pantalones_event(self, producto: Producto):
+        print(producto)
+        followup = {}
+        followup["name"] = "get-talla-pantalones"
+        parameters = {}
+        if producto.color != None:
+            parameters["color"] = producto.color
+        if producto.nombre != None:
+            parameters["producto"] = producto.nombre
         followup["parameters"] = parameters
         self.response["followupEventInput"] = followup
