@@ -1,5 +1,5 @@
+from telegram.pantalones import consultar_pantalones
 from entities.usuario import Usuario
-from intents.pantalones import consultar_pantalones
 from database.command import limpiar_carrito, pagar_carrito
 from database.persitencia import save_shopping_car, save_usuario
 from entities.df_context import get_carrito_context, get_user_context
@@ -39,13 +39,11 @@ def consultar_camisetas(request):
     #bot_response = request["queryResult"]["fulfillmentText"]
     response = DFResponse(request)
     user = get_user_context(request)
-    print(f"user nombre: {user.get_nombre()} - talla: {user.get_talla_polera()} \
-        - genero: {user.get_genero()}")
+    print(user)
     producto = get_product_from_params(request)
     producto.talla = user.get_talla_polera()
     producto.genero(user.get_genero())
-    print(f"producto nombre: {producto.nombre} - talla: {producto.talla} \
-        - color: {producto.color} - genero: {producto.get_genero()}")
+    print(producto)
     products = query.productos(producto)
     print(f"Numero de productos: {len(products)}")
     response.cards(products)
@@ -111,9 +109,10 @@ def comprar(request):
         #entrega = datetime.datetime.today() + datetime.timedelta(days=5)
         if orden != None:
             response.text(
-                f"Se ha procesado el pago con tú tarjeta terminada en {orden.tarjeta}, \
-                    el número de orden es {orden.carrito}, tus productos se entregarán el {orden.fecha_formateada()} \
-                        en tu dirección registrada: {orden.direccion}")
+                f"Se ha procesado el pago con tú tarjeta terminada en {orden.tarjeta}, "
+                f"el número de orden es {orden.carrito}, tus productos se entregarán el {orden.fecha_formateada()} "
+                f"en tu dirección registrada: {orden.direccion}"
+            )
         else:
             response.text("No encontramos tu información")
     else:

@@ -12,8 +12,8 @@ def consultar_pantalones(request):
     #bot_response = request["queryResult"]["fulfillmentText"]
     response = DFResponse(request)
     producto = get_product_from_params(request)
+    __cambiar_filtro_usuario(request, producto)
     if __check_buscar_producto(producto):
-        #__cambiar_filtro_usuario(request, producto)
         print(producto)
         products = query.productos(producto)
         print(f"Numero de productos encontrados: {len(products)}")

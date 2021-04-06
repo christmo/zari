@@ -1,5 +1,5 @@
+from general.pantalones import consultar_pantalones
 from entities.usuario import Usuario
-from intents.pantalones import consultar_pantalones
 from database.command import limpiar_carrito, pagar_carrito
 from database.persitencia import save_shopping_car, save_usuario
 from entities.df_context import get_carrito_context, get_user_context
@@ -118,9 +118,10 @@ def comprar(request):
         #entrega = datetime.datetime.today() + datetime.timedelta(days=5)
         if orden != None:
             response.text(
-                f"Se ha procesado el pago con tú tarjeta terminada en {orden.tarjeta}, \
-                    el número de orden es {orden.carrito}, tus productos se entregarán el {orden.fecha_formateada()} \
-                        en tu dirección registrada: {orden.direccion}")
+                f"Se ha procesado el pago con tú tarjeta terminada en {orden.tarjeta}, "
+                f"el número de orden es {orden.carrito}, tus productos se entregarán el {orden.fecha_formateada()} "
+                f"en tu dirección registrada: {orden.direccion}"
+            )
         else:
             response.text("No encontramos tu información")
     else:
