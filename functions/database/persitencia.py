@@ -50,9 +50,19 @@ def save_usuario(user: DBUsuario):
     engine = pgsql.init_connection_engine()
     Session = sessionmaker(bind=engine)
     session = Session()
-    session.add(user)
+    user_found = session.query(DBUsuario).filter(
+        and_(DBUsuario.telegram == user.telegram)
+    ).first()
+    if user_found != None:
+        print(
+            f'usuario encontrado solo actualizar datos {user_found.id_usuario}')
+        user.id_usuario = user_found.id_usuario
+        session.merge(user)
+    else:
+        session.add(user)
     user = session.query(DBUsuario).filter(
         and_(DBUsuario.telegram == user.telegram)
     ).first()
     session.commit()
+    print(f'usuario guardado se devuelve: {user.id_usuario}')
     return user

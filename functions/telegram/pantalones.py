@@ -20,8 +20,8 @@ def consultar_pantalones(request):
         if len(products) > 0:
             response.cards(products)
         else:
-            response.text(f'No encontré productos de este tipo {producto.nombre}'
-                          f' de color {producto.color}, para {producto.get_genero_texto()} de talla {producto.talla}')
+            response.text(f'No encontré productos de este tipo {producto.nombre} '
+                          f'de color {producto.color}, para {producto.get_genero_texto()} de talla {producto.talla}')
     else:
         print("Completar parametros del producto Talla y Genero del cliente!!!")
         response.talla_pantalones_event(producto)
@@ -44,12 +44,16 @@ def __check_buscar_producto(producto: Producto):
         buscar = False
     return buscar
 
-"""
-    TODO: Poner en el contexto si la busqueda es para el usuario o para terceros
-"""
-def __cambiar_filtro_usuario(request, producto):
+
+def __cambiar_filtro_usuario(request, producto: Producto):
     user = get_user_context(request)
     if user != None and user.is_full():
         print(user)
-        producto.talla = user.get_talla_pantalon()
-        producto.genero(user.get_genero())
+        if len(producto.talla) == 0:
+            producto.talla = user.get_talla_pantalon()
+        else:
+            print('Se toma la talla del producto buscado no del cliente')
+        if producto.get_genero() == 0:
+            producto.genero(user.get_genero())
+        else:
+            print('Se toma el genero del producto buscado no del cliente')

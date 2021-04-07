@@ -11,6 +11,11 @@ def get_username_telegram(request):
                     return request["originalDetectIntentRequest"]["payload"]["data"]["from"]["username"]
                 if "id" in request["originalDetectIntentRequest"]["payload"]["data"]["from"]:
                     return request["originalDetectIntentRequest"]["payload"]["data"]["from"]["id"]
+            if "from" in request["originalDetectIntentRequest"]["payload"]["data"]["callback_query"]:
+                if "username" in request["originalDetectIntentRequest"]["payload"]["data"]["callback_query"]["from"]:
+                    return request["originalDetectIntentRequest"]["payload"]["data"]["callback_query"]["from"]["username"]
+                if "id" in request["originalDetectIntentRequest"]["payload"]["data"]["callback_query"]["from"]:
+                    return request["originalDetectIntentRequest"]["payload"]["data"]["callback_query"]["from"]["id"]                
     return None
 
 
@@ -67,6 +72,8 @@ def user_parameters(request):
         nombre = nombre_apellido[0]
         apellido = nombre_apellido[1]
     else:
+        nombre = nombre_apellido[0]
+        apellido = None
         print(f"No se envia nombre y apellido {nombre_apellido}")
     talla_pantalon = get_parameter(request, 'talla_pantalon')
     talla_polera = get_parameter(request, 'talla_camiseta')

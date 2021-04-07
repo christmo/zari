@@ -63,7 +63,15 @@ def agregar_producto(request):
             f"Productos en el carrito {len(car.detalles)} por un total de {car.total}€")
         response.context_shoppingcar(car)
     else:
-        response.register_event()
+        print('Enviar a registrar al cliente')
+        response.text(
+            "Necesitamos registrarte como usuario para agregar productos a tu carrito, "
+            "completa las preguntas para poderte dar mejores recomendaciones "
+            "y ajustar las búsquedas a tu información solo tardará 1 minuto."
+            '\n\nPara empezar tu registro dime "zari agregame como cliente"'
+            '\n(Si al iniciar no quieres continuar siempre me puedes decir "cancelar" y detendré las preguntas)'
+        )
+        #response.register_event()
     return response.to_json()
 
 
@@ -130,7 +138,8 @@ def registrar_usuario(request):
     usuario = Usuario.parse_usuario(user)
     response.context_usuario(usuario)
     response.text(
-        "Listo, ahora puedes preguntarme cualquier cosa y buscaré lo que te quede mejor a ti")
+        "Genial, ahora puedes agregar productos a tu carrito!!!"
+    )
     return response.to_json()
 
 

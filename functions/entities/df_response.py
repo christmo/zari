@@ -68,17 +68,33 @@ class DFResponse:
         fulfillment = []
         total = 0
         numero = 0
-        for prod in products:
+        if len(products) > 0:
             DFText().addItem(
-                f"{prod.codigo} - {prod.nombre} - {prod.talla} - {prod.precio} - {prod.descripcion}",
+                "Voy a listar los productos que tienes en tu carrito:",
                 fulfillment
             )
-            total += float(prod.precio)
-            numero += 1
-        DFText().addItem(
-            f"En tu carrito tienes {numero} productos por un total de {total}€",
-            fulfillment
-        )
+            for prod in products:
+                DFText().addItem(
+                    f"{prod.descripcion} código {prod.codigo} - {prod.nombre}, "
+                    f"en talla {prod.talla} y cuesta {'{:.2f}€'.format(prod.precio)}",
+                    fulfillment
+                )
+                total += float(prod.precio)
+                numero += 1
+            DFText().addItem(
+                f"En total tus {numero} productos suman {'{:.2f}€'.format(total)}",
+                fulfillment
+            )
+            DFText().addItem(
+                f'\nRecuerda si quieres limpiar tu carrito usa frases como "zari elimina mi carrito" ',
+                fulfillment
+            )
+        else:
+            DFText().addItem(
+                'Actualmente no tienes productos en tu carrito, si quieres agregar items, '
+                'busca lo que te guste y pulsa el botón de "Agregar al Carrito".',
+                fulfillment
+            )
         self.response["fulfillmentMessages"] = fulfillment
 
     def register_event(self):

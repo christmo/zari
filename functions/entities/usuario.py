@@ -5,9 +5,9 @@ from entities.db_usuario import DBUsuario
 class Usuario:
     __nombre = ''
     __apellido = ''
-    __talla_calzado = ''
     __talla_pantalon = ''
     __talla_polera = ''
+    __talla_calzado = 0
     __genero = 0
     __id = 0
 
@@ -87,10 +87,24 @@ class Usuario:
         return self.__id
 
     def is_full(self):
-        return len(self.__username) > 0 and len(self.__nombre) > 0 \
-            and len(self.__apellido) > 0 and len(self.__talla_calzado) > 0 \
-            and len(self.__talla_pantalon) > 0 and len(self.__talla_polera) > 0 \
-            and self.__genero > 0 and self.__id > 0
+        if not self.__username or len(self.__username) == 0:
+            return False
+        if not self.__nombre or len(self.__nombre) == 0:
+            return False
+        if not self.__apellido or len(self.__apellido) == 0:
+            return False
+        if not self.__talla_pantalon or len(self.__talla_pantalon) == 0:
+            return False
+        if not self.__talla_polera or len(self.__talla_polera) == 0:
+            return False
+        if not self.__genero or self.__genero <= 0:
+            return False
+        if not self.__id or self.__id <= 0:
+            return False
+        if not self.__talla_calzado or int(self.__talla_calzado) <= 0:
+            return False
+
+        return True
 
     def __repr__(self):
         return f"username: {self.__username} nombre: {self.__nombre} \
