@@ -162,7 +162,7 @@ def gateway(request):
         print(f"Intent invocado Dialogflow: {intent}")
         if intent == "Welcome":
             response = saludo(request)
-        if intent == "PeticionPantalones" or intent == "pantalones-parameters":
+        if intent == "PeticionPantalones" or intent == "pantalones-parameters" or intent == "SolicitarProducto":
             response = consultar_pantalones(request)
         if intent == "PeticionCamiseta":
             response = consultar_camisetas(request)

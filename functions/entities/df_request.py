@@ -15,7 +15,7 @@ def get_username_telegram(request):
                 if "username" in request["originalDetectIntentRequest"]["payload"]["data"]["callback_query"]["from"]:
                     return request["originalDetectIntentRequest"]["payload"]["data"]["callback_query"]["from"]["username"]
                 if "id" in request["originalDetectIntentRequest"]["payload"]["data"]["callback_query"]["from"]:
-                    return request["originalDetectIntentRequest"]["payload"]["data"]["callback_query"]["from"]["id"]                
+                    return request["originalDetectIntentRequest"]["payload"]["data"]["callback_query"]["from"]["id"]
     return None
 
 
@@ -46,6 +46,7 @@ def get_product_from_params(request) -> Producto:
     producto, id_producto, costo = param_product_id_costo(request)
     p = Producto(nombre, talla, color, producto)
     p.genero(get_parameter(request, "genero"))
+    p.numero = get_parameter(request, "numero")
     p.codigo = id_producto
     p.costo = costo
     return p

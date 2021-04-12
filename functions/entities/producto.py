@@ -5,12 +5,23 @@ class Producto:
     descripcion = ''
     codigo = 0
     costo = 0
+    numero = 0
 
     def __tipo_producto(self, tipo) -> int:
         if "pantalones" == tipo or 1 == tipo or "pantalon" == tipo:
             return 1
         if "camiseta" == tipo or 2 == tipo or "polera" == tipo:
             return 2
+        if "camisa" == tipo or 3 == tipo or "polera" == tipo:
+            return 3
+        if "short" == tipo or 4 == tipo or "short" == tipo:
+            return 4
+        if "zapatos" == tipo or 5 == tipo or "calzado" == tipo:
+            return 5
+        if "vestido" == tipo or 6 == tipo or "vestido" == tipo:
+            return 6
+        if "abrigo" == tipo or 7 == tipo or "sweater" == tipo:
+            return 7
         return 0
 
     def __init__(self, nombre, talla, color, tipo):
@@ -72,4 +83,4 @@ class Producto:
         return wrapper
 
     def __repr__(self):
-        return f"nombre: {self.nombre} - talla: {self.talla} - color: {self.color} - tipo: {self.tipo} - genero: {self.__genero}"
+        return f"nombre: {self.nombre} - talla: {self.talla} - color: {self.color} - tipo: {self.tipo} - genero: {self.__genero} - numero {self.numero}"

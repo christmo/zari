@@ -71,7 +71,7 @@ def agregar_producto(request):
             '\n\nPara empezar tu registro dime "zari agregame como cliente"'
             '\n(Si al iniciar no quieres continuar siempre me puedes decir "cancelar" y detendré las preguntas)'
         )
-        #response.register_event()
+        # response.register_event()
     return response.to_json()
 
 
@@ -153,7 +153,7 @@ def gateway(request):
         print(f"Intent invocado Telegram: {intent}")
         if intent == "Welcome":
             response = saludo(request)
-        if intent == "PeticionPantalones" or intent == "pantalones-parameters":
+        if intent == "PeticionPantalones" or intent == "pantalones-parameters" or intent == "SolicitarProducto":
             response = consultar_pantalones(request)
         if intent == "PeticionCamiseta":
             response = consultar_camisetas(request)

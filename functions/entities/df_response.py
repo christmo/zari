@@ -75,7 +75,7 @@ class DFResponse:
             )
             for prod in products:
                 DFText().addItem(
-                    f"{prod.descripcion} código {prod.codigo} - {prod.nombre}, "
+                    f"{numero + 1}. - {prod.descripcion} código {prod.codigo} - {prod.nombre}, "
                     f"en talla {prod.talla} y cuesta {'{:.2f}€'.format(prod.precio)}",
                     fulfillment
                 )
