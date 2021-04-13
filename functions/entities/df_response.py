@@ -124,3 +124,43 @@ class DFResponse:
             parameters["producto"] = producto.nombre
         followup["parameters"] = parameters
         self.response["followupEventInput"] = followup
+
+    def parametros_producto_event(self, producto: Producto):
+        print(producto)
+        followup = {}
+        followup["name"] = "fill-parametros_producto"
+        parameters = {}
+        if producto.color != None:
+            parameters["color"] = producto.color
+        if producto.nombre != None:
+            parameters["producto"] = producto.nombre
+        followup["parameters"] = parameters
+        self.response["followupEventInput"] = followup
+
+    def fill_numero_zapatos_event(self, producto: Producto):
+        print(producto)
+        followup = {}
+        followup["name"] = "fill-numero-zapatos"
+        parameters = {}
+        if producto.color != None:
+            parameters["color"] = producto.color
+        if producto.nombre != None:
+            parameters["producto"] = producto.nombre
+        if producto.get_genero() != 0:
+            parameters["genero"] = producto.get_genero_texto()
+        followup["parameters"] = parameters
+        self.response["followupEventInput"] = followup
+
+    def fill_talla_productos_event(self, producto: Producto):
+        print(producto)
+        followup = {}
+        followup["name"] = "fill-talla_productos"
+        parameters = {}
+        if producto.color != None:
+            parameters["color"] = producto.color
+        if producto.nombre != None:
+            parameters["producto"] = producto.nombre
+        if producto.get_genero() != 0:
+            parameters["genero"] = producto.get_genero_texto()
+        followup["parameters"] = parameters
+        self.response["followupEventInput"] = followup

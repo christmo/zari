@@ -1,11 +1,11 @@
-from general.pantalones import consultar_pantalones
-from entities.usuario import Usuario
+from general.productos import consultar_productos, validar_parametros_producto
 from database.command import limpiar_carrito, pagar_carrito
 from database.persitencia import save_shopping_car, save_usuario
 from entities.df_context import get_carrito_context, get_user_context
 from entities.df_request import get_product_from_params, user_parameters
 from entities.df_response import DFResponse
 from database import consultas as query
+from entities.usuario import Usuario
 
 
 def saludo(request):
@@ -40,23 +40,23 @@ def saludo(request):
 #    return response.to_json()
 
 
-def consultar_camisetas(request):
-    """
-        Procesa la respuesta del Intent Camisetas
-    """
-    response = DFResponse(request)
-    user = get_user_context(request)
-    print(f"user nombre: {user.get_nombre()} - talla: {user.get_talla_polera()} \
-            - genero: {user.get_genero()}")
-    producto = get_product_from_params(request)
-    producto.talla = user.get_talla_polera()
-    producto.genero(user.get_genero())
-    print(f"producto nombre: {producto.nombre} - talla: {producto.talla} \
-            - color: {producto.color} - genero: {producto.get_genero()}")
-    products = query.productos(producto)
-    print(f"Numero de productos: {len(products)}")
-    response.products_text(products)
-    return response.to_json()
+# def consultar_camisetas(request):
+#    """
+#        Procesa la respuesta del Intent Camisetas
+#    """
+#    response = DFResponse(request)
+#    user = get_user_context(request)
+#    print(f"user nombre: {user.get_nombre()} - talla: {user.get_talla_polera()} \
+#            - genero: {user.get_genero()}")
+#    producto = get_product_from_params(request)
+#    producto.talla = user.get_talla_polera()
+#    producto.genero(user.get_genero())
+#    print(f"producto nombre: {producto.nombre} - talla: {producto.talla} \
+#            - color: {producto.color} - genero: {producto.get_genero()}")
+#    products = query.productos(producto)
+#    print(f"Numero de productos: {len(products)}")
+#    response.products_text(products)
+#    return response.to_json()
 
 
 def agregar_producto(request):
@@ -162,10 +162,8 @@ def gateway(request):
         print(f"Intent invocado Dialogflow: {intent}")
         if intent == "Welcome":
             response = saludo(request)
-        if intent == "PeticionPantalones" or intent == "pantalones-parameters" or intent == "SolicitarProducto":
-            response = consultar_pantalones(request)
-        if intent == "PeticionCamiseta":
-            response = consultar_camisetas(request)
+        # if intent == "PeticionCamiseta":
+        #    response = consultar_camisetas(request)
         if intent == "AgregarProducto":
             response = agregar_producto(request)
         if intent == "EliminarCarrito":
@@ -176,4 +174,10 @@ def gateway(request):
             response = comprar(request)
         if intent == "RegistrarUsuario":
             response = registrar_usuario(request)
+        # if intent == "PeticionPantalones" or intent == "pantalones-parameters" \
+        if intent == "SolicitarProducto" or intent == "parametros-producto-talla" \
+                or intent == "parametros-producto-numero":
+            response = consultar_productos(request)
+        if intent == "parametros-producto":
+            response = validar_parametros_producto(request)
     return response

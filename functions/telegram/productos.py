@@ -5,7 +5,7 @@ from database import consultas as query
 from entities.df_context import get_user_context
 
 
-def consultar_pantalones(request):
+def consultar_productos(request):
     """
         Procesa la respuesta del Intent Pantalones
     """
@@ -22,13 +22,14 @@ def consultar_pantalones(request):
         else:
             if producto.tipo == 5:
                 response.text(f'No encontré productos de este tipo {producto.nombre} '
-                          f'de color {producto.color}, para {producto.get_genero_texto()} de número {producto.numero}')
+                              f'de color {producto.color}, para {producto.get_genero_texto()} de número {producto.numero}')
             else:
                 response.text(f'No encontré productos de este tipo {producto.nombre} '
-                          f'de color {producto.color}, para {producto.get_genero_texto()} de talla {producto.talla}')
+                              f'de color {producto.color}, para {producto.get_genero_texto()} de talla {producto.talla}')
     else:
         print("Completar parametros del producto Talla y Genero del cliente!!!")
-        response.talla_pantalones_event(producto)
+        # response.talla_pantalones_event(producto)
+        response.parametros_producto_event(producto)
 
     return response.to_json()
 
@@ -53,7 +54,7 @@ def __cambiar_filtro_usuario(request, producto: Producto):
     user = get_user_context(request)
     if user != None and user.is_full():
         print(user)
-        if len(producto.talla) == 0:
+        if producto.talla != None and len(producto.talla) == 0:
             producto.talla = user.get_talla_pantalon()
         else:
             print('Se toma la talla del producto buscado no del cliente')
@@ -61,3 +62,30 @@ def __cambiar_filtro_usuario(request, producto: Producto):
             producto.genero(user.get_genero())
         else:
             print('Se toma el genero del producto buscado no del cliente')
+
+
+def validar_parametros_producto(request):
+    """
+        Validar parametros Producto
+    """
+    #bot_response = request["queryResult"]["fulfillmentText"]
+    response = DFResponse(request)
+    producto = get_product_from_params(request)
+    __cambiar_filtro_usuario(request, producto)
+    if __check_buscar_producto(producto):
+        print(producto)
+        products = query.productos(producto)
+        print(f"Numero de productos encontrados: {len(products)}")
+        if len(products) > 0:
+            response.cards(products)
+        else:
+            response.text(f'No encontré productos de este tipo {producto.nombre}'
+                          f' de color {producto.color}, para {producto.get_genero_texto()} de talla {producto.talla}')
+    else:
+        print("Completar parametros del producto Talla y Genero del cliente!!!")
+        if producto.nombre == 'zapatos':
+            response.fill_numero_zapatos_event(producto)
+        else:
+            response.fill_talla_productos_event(producto)
+
+    return response.to_json()
