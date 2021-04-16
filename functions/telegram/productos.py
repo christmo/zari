@@ -37,8 +37,12 @@ def consultar_productos(request):
 def __check_buscar_producto(producto: Producto):
     if producto != None:
         buscar = True
-        if producto.talla != None and len(producto.talla) == 0:
-            buscar = False
+        if producto.tipo != 5:
+            if producto.talla == None or len(producto.talla) == 0:
+                buscar = False
+        else:
+            if producto.numero == None or producto.numero == 0:
+                buscar = False
         if producto.color != None and len(producto.color) == 0:
             buscar = False
         if producto.nombre != None and len(producto.nombre) == 0:
@@ -55,7 +59,12 @@ def __cambiar_filtro_usuario(request, producto: Producto):
     if user != None and user.is_full():
         print(user)
         if producto.talla != None and len(producto.talla) == 0:
-            producto.talla = user.get_talla_pantalon()
+            if producto.tipo == 1 or producto.tipo == 4 or producto.tipo == 6:
+                producto.talla = user.get_talla_pantalon()
+            if producto.tipo == 2 or producto.tipo == 3 or producto.tipo == 7:
+                producto.talla = user.get_talla_polera()
+        if producto.numero != None and producto.numero == 0:
+            producto.numero = user.get_talla_calzado()
         else:
             print('Se toma la talla del producto buscado no del cliente')
         if producto.get_genero() == 0:

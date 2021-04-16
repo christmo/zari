@@ -20,8 +20,12 @@ def consultar_productos(request):
         if len(products) > 0:
             response.products_text(products)
         else:
-            response.text(f'No encontré productos de este tipo {producto.nombre}'
-                          f' de color {producto.color}, para {producto.get_genero_texto()} de talla {producto.talla}')
+            if producto.tipo == 5:
+                response.text(f'No encontré productos de este tipo {producto.nombre} '
+                              f'de color {producto.color}, para {producto.get_genero_texto()} de número {producto.numero}')
+            else:
+                response.text(f'No encontré productos de este tipo {producto.nombre} '
+                              f'de color {producto.color}, para {producto.get_genero_texto()} de talla {producto.talla}')
     else:
         print("Completar parametros del producto Talla y Genero del cliente!!!")
         # response.talla_pantalones_event(producto)
@@ -33,8 +37,12 @@ def consultar_productos(request):
 def __check_buscar_producto(producto: Producto):
     if producto != None:
         buscar = True
-        if producto.talla == None or len(producto.talla) == 0:
-            buscar = False
+        if producto.tipo != 5:
+            if producto.talla == None or len(producto.talla) == 0:
+                buscar = False
+        else:
+            if producto.numero == None or producto.numero == 0:
+                buscar = False
         if producto.color == None or len(producto.color) == 0:
             buscar = False
         if producto.nombre == None or len(producto.nombre) == 0:
@@ -53,12 +61,23 @@ def __check_buscar_producto(producto: Producto):
 """
 
 
-def __cambiar_filtro_usuario(request, producto):
+def __cambiar_filtro_usuario(request, producto: Producto):
     user = get_user_context(request)
     if user != None and user.is_full():
         print(user)
-        producto.talla = user.get_talla_pantalon()
-        producto.genero(user.get_genero())
+        if producto.talla != None and len(producto.talla) == 0:
+            if producto.tipo == 1 or producto.tipo == 4 or producto.tipo == 6:
+                producto.talla = user.get_talla_pantalon()
+            if producto.tipo == 2 or producto.tipo == 3 or producto.tipo == 7:
+                producto.talla = user.get_talla_polera()
+        if producto.numero != None and producto.numero == 0:
+            producto.numero = user.get_talla_calzado()
+        else:
+            print('Se toma la talla del producto buscado no del cliente')
+        if producto.get_genero() == 0:
+            producto.genero(user.get_genero())
+        else:
+            print('Se toma el genero del producto buscado no del cliente')
 
 
 def validar_parametros_producto(request):

@@ -2,7 +2,7 @@ from telegram.productos import consultar_productos, validar_parametros_producto
 from database.command import limpiar_carrito, pagar_carrito
 from database.persitencia import save_shopping_car, save_usuario
 from entities.df_context import get_carrito_context, get_user_context
-from entities.df_request import get_name, get_product_from_params, get_username_telegram, get_product_from_params, user_parameters
+from entities.df_request import get_name, get_parameter, get_product_from_params, get_username_telegram, get_product_from_params, user_parameters
 from entities.df_response import DFResponse
 from database import consultas as query
 from entities.usuario import Usuario
@@ -31,24 +31,6 @@ def saludo(request):
     return response.to_json()
 
 
-# def consultar_camisetas(request):
-#    """
-#        Procesa la respuesta del Intent Camisetas
-#    """
-#    #bot_response = request["queryResult"]["fulfillmentText"]
-#    response = DFResponse(request)
-#    user = get_user_context(request)
-#    print(user)
-#    producto = get_product_from_params(request)
-#    producto.talla = user.get_talla_polera()
-#    producto.genero(user.get_genero())
-#    print(producto)
-#    products = query.productos(producto)
-#    print(f"Numero de productos: {len(products)}")
-#    response.cards(products)
-#    return response.to_json()
-
-
 def agregar_producto(request):
     """
         Agregar producto al carrito de compras
@@ -61,6 +43,8 @@ def agregar_producto(request):
         response.text(
             f"Productos en el carrito {len(car.detalles)} por un total de {car.total}€")
         response.context_shoppingcar(car)
+        response.inline_buttons("A donde quieres ir?", [
+                                "Pagar", "Promociones"])
     else:
         print('Enviar a registrar al cliente')
         response.text(
@@ -70,6 +54,8 @@ def agregar_producto(request):
             '\n\nPara empezar tu registro dime "zari agregame como cliente"'
             '\n(Si al iniciar no quieres continuar siempre me puedes decir "cancelar" y detendré las preguntas)'
         )
+        response.inline_buttons("A donde quieres ir?", [
+                                "Registrarme", "Promociones"])
         # response.register_event()
     return response.to_json()
 
@@ -100,6 +86,27 @@ def consultar_carrito(request):
     if user != None:
         productos = query.shopping_cart(user)
         response.shopping_cart_text(productos)
+        response.inline_buttons("A donde quieres ir?", ["Promociones"])
+    else:
+        response.register_event()
+    return response.to_json()
+
+
+def tarjetas(request):
+    """
+        Consultar las tarjetas del cliente para el pago
+    """
+    response = DFResponse(request)
+    user = get_user_context(request)
+    if user != None:
+        user = query.tarjetas(user)
+        if len(user.get_tarjetas()) > 0:
+            response.quick_replies(
+                'Con que tarjeta quieres pagar?',
+                user.get_tarjetas()
+            )
+        else:
+            response.register_card_event(user)
     else:
         response.register_event()
     return response.to_json()
@@ -113,13 +120,14 @@ def comprar(request):
     user = get_user_context(request)
     if user != None:
         orden = pagar_carrito(user)
-        #entrega = datetime.datetime.today() + datetime.timedelta(days=5)
         if orden != None:
+            tarjeta = get_parameter(request, 'tarjeta')
             response.text(
-                f"Se ha procesado el pago con tú tarjeta terminada en {orden.tarjeta}, "
+                f"Se ha procesado el pago con tú tarjeta terminada en {tarjeta}, "
                 f"el número de orden es {orden.carrito}, tus productos se entregarán el {orden.fecha_formateada()} "
                 f"en tu dirección registrada: {orden.direccion}"
             )
+            response.inline_buttons("A donde quieres ir?", ["Promociones"])
         else:
             response.text("No encontramos tu información")
     else:
@@ -139,6 +147,7 @@ def registrar_usuario(request):
     response.text(
         "Genial, ahora puedes agregar productos a tu carrito!!!"
     )
+    response.inline_buttons("A donde quieres ir?", ["Promociones"])
     return response.to_json()
 
 
@@ -161,6 +170,8 @@ def gateway(request):
         if intent == "VerCarrito":
             response = consultar_carrito(request)
         if intent == "Comprar":
+            response = tarjetas(request)
+        if intent == "Comprar-tarjeta":
             response = comprar(request)
         if intent == "RegistrarUsuario":
             response = registrar_usuario(request)

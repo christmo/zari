@@ -2,7 +2,7 @@ from general.productos import consultar_productos, validar_parametros_producto
 from database.command import limpiar_carrito, pagar_carrito
 from database.persitencia import save_shopping_car, save_usuario
 from entities.df_context import get_carrito_context, get_user_context
-from entities.df_request import get_product_from_params, user_parameters
+from entities.df_request import get_parameter, get_product_from_params, user_parameters
 from entities.df_response import DFResponse
 from database import consultas as query
 from entities.usuario import Usuario
@@ -115,6 +115,26 @@ def consultar_carrito(request):
     return response.to_json()
 
 
+def tarjetas(request):
+    """
+        Consultar las tarjetas del cliente para el pago
+    """
+    response = DFResponse(request)
+    user = get_user_context(request)
+    if user != None:
+        user = query.tarjetas(user)
+        if len(user.get_tarjetas()) > 0:
+            response.text(
+                "Con que tarjeta quieres pagar? "
+                f"{user.get_tarjetas()}"
+            )
+        else:
+            response.register_card_event(user)
+    else:
+        response.register_event()
+    return response.to_json()
+
+
 def comprar(request):
     """
         Proceso para comprar todos los productos del carrito
@@ -123,10 +143,10 @@ def comprar(request):
     user = get_user_context(request)
     if user != None:
         orden = pagar_carrito(user)
-        #entrega = datetime.datetime.today() + datetime.timedelta(days=5)
         if orden != None:
+            tarjeta = get_parameter(request, 'tarjeta')
             response.text(
-                f"Se ha procesado el pago con tú tarjeta terminada en {orden.tarjeta}, "
+                f"Se ha procesado el pago con tú tarjeta terminada en {tarjeta}, "
                 f"el número de orden es {orden.carrito}, tus productos se entregarán el {orden.fecha_formateada()} "
                 f"en tu dirección registrada: {orden.direccion}"
             )
@@ -171,6 +191,8 @@ def gateway(request):
         if intent == "VerCarrito":
             response = consultar_carrito(request)
         if intent == "Comprar":
+            response = tarjetas(request)
+        if intent == "Comprar-tarjeta":
             response = comprar(request)
         if intent == "RegistrarUsuario":
             response = registrar_usuario(request)

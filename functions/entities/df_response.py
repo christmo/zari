@@ -1,3 +1,5 @@
+from telegram.tg_inline_buttons import tg_inline_buttons
+from telegram.tg_quick_replies import tg_quick_replies
 from entities.producto import Producto
 from entities.car_detalle import CarDetalle
 from entities.carrito import Carrito
@@ -10,17 +12,21 @@ import json
 
 class DFResponse:
     response = {}
+    fulfillment = []
 
     def __init__(self, request):
         self.request = request
         self.response = {}
+        self.fulfillment = []
 
     def to_json(self):
+        self.response["fulfillmentMessages"] = self.fulfillment
         print(self.response)
         return json.dumps(self.response)
 
     def text(self, message):
-        self.response["fulfillmentMessages"] = DFText().toText(message)
+        #self.response["fulfillmentMessages"] = DFText().toText(message)
+        self.fulfillment = DFText().toText(message)
 
     def context_usuario(self, usuario: Usuario):
         if usuario != None:
@@ -50,58 +56,66 @@ class DFResponse:
         )
 
     def cards(self, products):
-        fullfillment = []
+        #fulfillment = []
         for prod in products:
-            fullfillment.append(prod.toCard())
-        self.response["fulfillmentMessages"] = fullfillment
+            self.fulfillment.append(prod.toCard())
+        #self.response["fulfillmentMessages"] = fulfillment
 
     def products_text(self, products):
-        fulfillment = []
+        #fulfillment = []
         for prod in products:
             DFText().addItem(
                 f"{prod.codigo} - {prod.nombre} - {prod.talla} - {prod.precio} - {prod.descripcion}",
-                fulfillment
+                self.fulfillment
             )
-        self.response["fulfillmentMessages"] = fulfillment
+        #self.response["fulfillmentMessages"] = fulfillment
 
     def shopping_cart_text(self, products):
-        fulfillment = []
+        #fulfillment = []
         total = 0
         numero = 0
         if len(products) > 0:
             DFText().addItem(
                 "Voy a listar los productos que tienes en tu carrito:",
-                fulfillment
+                self.fulfillment
             )
             for prod in products:
                 DFText().addItem(
                     f"{numero + 1}. - {prod.descripcion} código {prod.codigo} - {prod.nombre}, "
                     f"en talla {prod.talla} y cuesta {'{:.2f}€'.format(prod.precio)}",
-                    fulfillment
+                    self.fulfillment
                 )
                 total += float(prod.precio)
                 numero += 1
             DFText().addItem(
                 f"En total tus {numero} productos suman {'{:.2f}€'.format(total)}",
-                fulfillment
+                self.fulfillment
             )
             DFText().addItem(
                 f'\nRecuerda si quieres limpiar tu carrito usa frases como "zari elimina mi carrito" ',
-                fulfillment
+                self.fulfillment
             )
         else:
             DFText().addItem(
                 'Actualmente no tienes productos en tu carrito, si quieres agregar items, '
                 'busca lo que te guste y pulsa el botón de "Agregar al Carrito".',
-                fulfillment
+                self.fulfillment
             )
-        self.response["fulfillmentMessages"] = fulfillment
+        #self.response["fulfillmentMessages"] = fulfillment
 
     def register_event(self):
         followup = {}
         followup["name"] = "register-event"
         parameters = {}
         # parameters[""]
+        followup["parameters"] = parameters
+        self.response["followupEventInput"] = followup
+
+    def register_card_event(self, user: Usuario):
+        followup = {}
+        followup["name"] = "register-card-event"
+        parameters = {}
+        parameters["user"] = user.get_id()
         followup["parameters"] = parameters
         self.response["followupEventInput"] = followup
 
@@ -164,3 +178,9 @@ class DFResponse:
             parameters["genero"] = producto.get_genero_texto()
         followup["parameters"] = parameters
         self.response["followupEventInput"] = followup
+
+    def quick_replies(self, titulo, botones):
+        tg_quick_replies(titulo, botones, self.fulfillment)
+
+    def inline_buttons(self, titulo, botones):
+        tg_inline_buttons(titulo, botones, self.fulfillment)

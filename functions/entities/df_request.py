@@ -46,10 +46,22 @@ def get_product_from_params(request) -> Producto:
     producto, id_producto, costo = param_product_id_costo(request)
     p = Producto(nombre, talla, color, producto)
     p.genero(get_parameter(request, "genero"))
-    p.numero = get_parameter(request, "numero")
+    p.numero = get_numero_zapatos(request)
     p.codigo = id_producto
     p.costo = costo
     return p
+
+
+def get_numero_zapatos(request) -> int:
+    numero = get_parameter(request, "numero")
+    if numero != None:
+        if numero == '':
+            numero = 0
+        else:
+            numero = int(numero)
+    else:
+        numero = 0
+    return numero
 
 
 def param_nombre_talla_color(request):

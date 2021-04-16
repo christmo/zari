@@ -40,8 +40,12 @@ and p.precio is not null """
         sql = sql + f"and c.id_tipo_producto = {producto.tipo} "
         # if producto.nombre != None:
         #    sql = sql + f"and lower(p.nombre_producto) like lower('%{producto.nombre}%') "
-        if producto.talla != None:
-            sql = sql + f"and p.talla = '{producto.talla}' "
+        if producto.tipo == 5:
+            if producto.numero != None:
+                sql = sql + f"and p.talla = '{producto.numero}' "
+        else:
+            if producto.talla != None:
+                sql = sql + f"and p.talla = '{producto.talla}' "
         if producto.color != None:
             sql = sql + f"and p.color = '{producto.color}' "
         if producto.get_genero() != None:
@@ -61,6 +65,7 @@ and p.precio is not null """
             products.append(p)
 
     return products
+
 
 def shopping_cart(user: Usuario):
     sql = f"""
@@ -89,3 +94,17 @@ and u.id_usuario = {user.get_id()}
             products.append(p)
 
     return products
+
+
+def tarjetas(user: Usuario):
+    sql = f"""
+select t.marca ||' - '|| t.numero as tarjeta
+from tarjetas t
+where t.id_usuario = {user.get_id()}
+    """
+    tarjetas = []
+    db = pgsql.init_connection_engine()
+    with db.connect() as conn:
+        tarjetas = conn.execute(sql).fetchall()
+        user.set_tarjetas([tarjeta[0] for tarjeta in tarjetas])
+    return user

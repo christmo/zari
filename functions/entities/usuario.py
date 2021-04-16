@@ -10,6 +10,7 @@ class Usuario:
     __talla_calzado = 0
     __genero = 0
     __id = 0
+    __tarjetas = []
 
     def __init__(self, username):
         self.__username = username
@@ -85,6 +86,12 @@ class Usuario:
 
     def get_id(self):
         return self.__id
+
+    def set_tarjetas(self, tarjetas):
+        self.__tarjetas = tarjetas
+
+    def get_tarjetas(self):
+        return self.__tarjetas
 
     def is_full(self):
         if not self.__username or len(self.__username) == 0:
