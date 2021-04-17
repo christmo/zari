@@ -198,7 +198,7 @@ def gateway(request):
             response = registrar_usuario(request)
         # if intent == "PeticionPantalones" or intent == "pantalones-parameters" \
         if intent == "SolicitarProducto" or intent == "parametros-producto-talla" \
-                or intent == "parametros-producto-numero":
+                or intent == "parametros-producto-numero" or intent == "producto-root":
             response = consultar_productos(request)
         if intent == "parametros-producto":
             response = validar_parametros_producto(request)

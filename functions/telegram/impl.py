@@ -44,7 +44,7 @@ def agregar_producto(request):
             f"Productos en el carrito {len(car.detalles)} por un total de {car.total}€")
         response.context_shoppingcar(car)
         response.inline_buttons("A donde quieres ir?", [
-                                "Pagar", "Promociones"])
+                                "Pagar", "Ver Carrito"])
     else:
         print('Enviar a registrar al cliente')
         response.text(
@@ -86,7 +86,7 @@ def consultar_carrito(request):
     if user != None:
         productos = query.shopping_cart(user)
         response.shopping_cart_text(productos)
-        response.inline_buttons("A donde quieres ir?", ["Promociones"])
+        response.inline_buttons("A donde quieres ir?", ["Limpiar Carrito", "Pagar"])
     else:
         response.register_event()
     return response.to_json()
@@ -177,7 +177,7 @@ def gateway(request):
             response = registrar_usuario(request)
         # if intent == "PeticionPantalones" or intent == "pantalones-parameters" \
         if intent == "SolicitarProducto" or intent == "parametros-producto-talla" \
-                or intent == "parametros-producto-numero":
+                or intent == "parametros-producto-numero" or intent == "producto-root":
             response = consultar_productos(request)
         if intent == "parametros-producto":
             response = validar_parametros_producto(request)

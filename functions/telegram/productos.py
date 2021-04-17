@@ -43,9 +43,9 @@ def __check_buscar_producto(producto: Producto):
         else:
             if producto.numero == None or producto.numero == 0:
                 buscar = False
-        if producto.color != None and len(producto.color) == 0:
+        if producto.color == None or len(producto.color) == 0:
             buscar = False
-        if producto.nombre != None and len(producto.nombre) == 0:
+        if producto.nombre == None or len(producto.nombre) == 0:
             buscar = False
         if producto.get_genero() == 0:
             buscar = False

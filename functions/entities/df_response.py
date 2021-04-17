@@ -132,9 +132,9 @@ class DFResponse:
         followup = {}
         followup["name"] = "get-talla-pantalones"
         parameters = {}
-        if producto.color != None:
+        if producto.color != None and len(producto.color) > 0:
             parameters["color"] = producto.color
-        if producto.nombre != None:
+        if producto.nombre != None and len(producto.nombre) > 0:
             parameters["producto"] = producto.nombre
         followup["parameters"] = parameters
         self.response["followupEventInput"] = followup
@@ -144,9 +144,9 @@ class DFResponse:
         followup = {}
         followup["name"] = "fill-parametros_producto"
         parameters = {}
-        if producto.color != None:
+        if producto.color != None and len(producto.color) > 0:
             parameters["color"] = producto.color
-        if producto.nombre != None:
+        if producto.nombre != None and len(producto.nombre) > 0:
             parameters["producto"] = producto.nombre
         followup["parameters"] = parameters
         self.response["followupEventInput"] = followup
@@ -156,9 +156,9 @@ class DFResponse:
         followup = {}
         followup["name"] = "fill-numero-zapatos"
         parameters = {}
-        if producto.color != None:
+        if producto.color != None and len(producto.color) > 0:
             parameters["color"] = producto.color
-        if producto.nombre != None:
+        if producto.nombre != None and len(producto.nombre) > 0:
             parameters["producto"] = producto.nombre
         if producto.get_genero() != 0:
             parameters["genero"] = producto.get_genero_texto()
@@ -170,9 +170,9 @@ class DFResponse:
         followup = {}
         followup["name"] = "fill-talla_productos"
         parameters = {}
-        if producto.color != None:
+        if producto.color != None and len(producto.color) > 0:
             parameters["color"] = producto.color
-        if producto.nombre != None:
+        if producto.nombre != None and len(producto.nombre) > 0:
             parameters["producto"] = producto.nombre
         if producto.get_genero() != 0:
             parameters["genero"] = producto.get_genero_texto()
