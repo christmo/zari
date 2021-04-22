@@ -1,5 +1,5 @@
 from entities.producto import Producto
-from entities.df_request import get_product_from_params
+from entities.df_request import get_product_from_params, get_username_telegram
 from entities.df_response import DFResponse
 from database import consultas as query
 from entities.df_context import get_user_context
@@ -27,8 +27,17 @@ def consultar_productos(request):
                 response.text(f'No encontré productos de este tipo {producto.nombre} '
                               f'de color {producto.color}, para {producto.get_genero_texto()} de talla {producto.talla}')
     else:
-        print("Completar parametros del producto Talla y Genero del cliente!!!")
-        # response.talla_pantalones_event(producto)
+        print("Completar parametros del producto Talla y Genero del cliente evento fill-parametros_producto")
+        username = get_username_telegram(request)
+        print(f"Username producto: {username}")
+        if username != None:
+            usuario = query.usuario(username)
+            if usuario != None and len(usuario.get_nombre()) > 1:
+                response.context_usuario(usuario)
+            else:
+                response.init_context_usuario()
+        else:
+            response.init_context_usuario()
         response.parametros_producto_event(producto)
 
     return response.to_json()
@@ -97,4 +106,11 @@ def validar_parametros_producto(request):
         else:
             response.fill_talla_productos_event(producto)
 
+    return response.to_json()
+
+
+def menu_productos(request):
+    response = DFResponse(request)
+    response.inline_buttons_vertical("Tengo estas opciones que te pueden interesar.",
+                                     ["👖 ver pantalones", "👕 ver camisetas", "👗 ver vestidos", "👟 ver zapatos"])
     return response.to_json()

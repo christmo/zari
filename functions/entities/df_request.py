@@ -10,12 +10,12 @@ def get_username_telegram(request):
                 if "username" in request["originalDetectIntentRequest"]["payload"]["data"]["from"]:
                     return request["originalDetectIntentRequest"]["payload"]["data"]["from"]["username"]
                 if "id" in request["originalDetectIntentRequest"]["payload"]["data"]["from"]:
-                    return request["originalDetectIntentRequest"]["payload"]["data"]["from"]["id"]
+                    return str(request["originalDetectIntentRequest"]["payload"]["data"]["from"]["id"])
             if "from" in request["originalDetectIntentRequest"]["payload"]["data"]["callback_query"]:
                 if "username" in request["originalDetectIntentRequest"]["payload"]["data"]["callback_query"]["from"]:
                     return request["originalDetectIntentRequest"]["payload"]["data"]["callback_query"]["from"]["username"]
                 if "id" in request["originalDetectIntentRequest"]["payload"]["data"]["callback_query"]["from"]:
-                    return request["originalDetectIntentRequest"]["payload"]["data"]["callback_query"]["from"]["id"]
+                    return str(request["originalDetectIntentRequest"]["payload"]["data"]["callback_query"]["from"]["id"])
     return None
 
 

@@ -27,8 +27,8 @@ def consultar_productos(request):
                 response.text(f'No encontré productos de este tipo {producto.nombre} '
                               f'de color {producto.color}, para {producto.get_genero_texto()} de talla {producto.talla}')
     else:
-        print("Completar parametros del producto Talla y Genero del cliente!!!")
-        # response.talla_pantalones_event(producto)
+        print("Completar parametros del producto Talla y Genero del cliente evento fill-parametros_producto")
+        response.init_context_usuario()
         response.parametros_producto_event(producto)
 
     return response.to_json()
@@ -104,4 +104,11 @@ def validar_parametros_producto(request):
         else:
             response.fill_talla_productos_event(producto)
 
+    return response.to_json()
+
+
+def menu_productos(request):
+    response = DFResponse(request)
+    response.text(f'Tengo estas opciones que te pueden interesar. '
+                  f'"ver pantalones", "ver camisetas", "ver vestidos", "ver zapatos"')
     return response.to_json()

@@ -1,4 +1,4 @@
-from general.productos import consultar_productos, validar_parametros_producto
+from general.productos import consultar_productos, menu_productos, validar_parametros_producto
 from database.command import limpiar_carrito, pagar_carrito
 from database.persitencia import save_shopping_car, save_usuario
 from entities.df_context import get_carrito_context, get_user_context
@@ -202,4 +202,6 @@ def gateway(request):
             response = consultar_productos(request)
         if intent == "parametros-producto":
             response = validar_parametros_producto(request)
+        if intent == "Productos" or intent == "Ayuda":
+            response = menu_productos(request)
     return response

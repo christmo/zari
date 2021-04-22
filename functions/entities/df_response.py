@@ -1,4 +1,4 @@
-from telegram.tg_inline_buttons import tg_inline_buttons
+from telegram.tg_inline_buttons import tg_inline_buttons, tg_inline_buttons_vertical
 from telegram.tg_quick_replies import tg_quick_replies
 from entities.producto import Producto
 from entities.car_detalle import CarDetalle
@@ -27,6 +27,12 @@ class DFResponse:
     def text(self, message):
         #self.response["fulfillmentMessages"] = DFText().toText(message)
         self.fulfillment = DFText().toText(message)
+
+    def init_context_usuario(self):
+        parameters = {}
+        self.response["outputContexts"] = add_user_context(
+            parameters, get_session(self.request)
+        )
 
     def context_usuario(self, usuario: Usuario):
         if usuario != None:
@@ -184,3 +190,6 @@ class DFResponse:
 
     def inline_buttons(self, titulo, botones):
         tg_inline_buttons(titulo, botones, self.fulfillment)
+    
+    def inline_buttons_vertical(self, titulo, botones):
+        tg_inline_buttons_vertical(titulo, botones, self.fulfillment)
