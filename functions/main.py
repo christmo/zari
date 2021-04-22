@@ -1,13 +1,19 @@
+from entities.producto import Producto
+from entities.usuario import Usuario
+from entities.carrito import Carrito
+from database.persitencia import save_shopping_car
 from entities.df_text import DFText
 import json
 from typing import Text
 from telegram import impl as telegram
 from general import impl as general
 
+
 def respuesta(message):
     response = {}
     response["fulfillmentMessages"] = DFText().toText(message)
     return json.dumps(response)
+
 
 def zari_webhook(request):
     """
@@ -26,5 +32,11 @@ def zari_webhook(request):
             return general.gateway(request_json)
     else:
         text = "Respuesta sin procesar"
+        #user = Usuario("christmo")
+        #user.id(3)
+        #prod = Producto("pantalones", "M", "azul", 1)
+        #prod.costo = 62.7
+        #prod.codigo = 100
+        #save_shopping_car(user, prod)
 
     return respuesta(text)
