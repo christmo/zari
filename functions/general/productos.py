@@ -64,12 +64,12 @@ def __cambiar_filtro_usuario(request, producto: Producto):
     user = get_user_context(request)
     if user != None and user.is_full():
         print(user)
-        if producto.talla != None and len(producto.talla) == 0:
+        if producto.talla == None or len(producto.talla) == 0:
             if producto.tipo == 1 or producto.tipo == 4 or producto.tipo == 6:
                 producto.talla = user.get_talla_pantalon()
             if producto.tipo == 2 or producto.tipo == 3 or producto.tipo == 7:
                 producto.talla = user.get_talla_polera()
-        if producto.numero != None and producto.numero == 0:
+        if producto.numero == None or producto.numero == 0:
             producto.numero = user.get_talla_calzado()
         else:
             print('Se toma la talla del producto buscado no del cliente')
@@ -83,7 +83,6 @@ def validar_parametros_producto(request):
     """
         Validar parametros Producto
     """
-    #bot_response = request["queryResult"]["fulfillmentText"]
     response = DFResponse(request)
     producto = get_product_from_params(request)
     __cambiar_filtro_usuario(request, producto)
