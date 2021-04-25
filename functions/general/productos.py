@@ -94,8 +94,12 @@ def validar_parametros_producto(request):
         if len(products) > 0:
             response.products_text(products)
         else:
-            response.text(f'No encontré productos de este tipo {producto.nombre}'
-                          f' de color {producto.color}, para {producto.get_genero_texto()} de talla {producto.talla}')
+            if producto.tipo == 5:
+                response.text(f'No encontré productos de este tipo {producto.nombre} '
+                              f'de color {producto.color}, para {producto.get_genero_texto()} de número {producto.numero}')
+            else:
+                response.text(f'No encontré productos de este tipo {producto.nombre} '
+                              f'de color {producto.color}, para {producto.get_genero_texto()} de talla {producto.talla}')
     else:
         print("Completar parametros del producto Talla y Genero del cliente!!!")
         if producto.nombre == 'zapatos':
