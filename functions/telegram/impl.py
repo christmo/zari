@@ -1,6 +1,7 @@
+from services.sentimiento import Sentimiento
 from telegram.productos import consultar_productos, menu_productos, validar_parametros_producto
 from database.command import limpiar_carrito, pagar_carrito
-from database.persitencia import save_shopping_car, save_usuario
+from database.persitencia import save_shopping_car, save_tarjeta_usuario, save_usuario
 from entities.df_context import get_carrito_context, get_user_context
 from entities.df_request import get_name, get_parameter, get_product_from_params, get_username_telegram, get_product_from_params, user_parameters
 from entities.df_response import DFResponse
@@ -23,8 +24,6 @@ def saludo(request):
             response.text(bot_response.replace('{name}', usuario.get_nombre()))
             response.context_usuario(usuario)
             return response.to_json()
-        # else:
-            # response.register_event()
 
     nombre = name if name != None else username
     response.text(bot_response.replace('{name}', nombre))
@@ -56,7 +55,6 @@ def agregar_producto(request):
         )
         response.inline_buttons("🤔 Te puedo llevar a ", [
                                 "📄 Registrarte", "🛍️ Promociones"])
-        # response.register_event()
     return response.to_json()
 
 
@@ -64,7 +62,6 @@ def eliminar_carrito(request):
     """
         Proceso para desactivar el carrito de compras enviado, y generar uno nuevo
     """
-    #bot_response = request["queryResult"]["fulfillmentText"]
     response = DFResponse(request)
     car = get_carrito_context(request)
     result = limpiar_carrito(car.id_car)
@@ -128,10 +125,10 @@ def comprar(request):
                 f"el número de orden es {orden.carrito}, tus productos se entregarán el {orden.fecha_formateada()} "
                 f"en tu dirección registrada: {orden.direccion}"
             )
-            response.inline_buttons("🤔 Te puedo llevar a ",
-                                    ["🛍️ Promociones"])
+            response.inline_buttons("🤔 Si quieres puedes calificarme: ",
+                                    ["⭐ Experiencia"])
         else:
-            response.text("No encontramos tu información")
+            response.text("No haz agregado nada a tu carrito, no se hizo ningún cargo a tu tarjeta.")
     else:
         response.register_event()
     return response.to_json()
@@ -154,6 +151,35 @@ def registrar_usuario(request):
     return response.to_json()
 
 
+def feedback_sentimiento(request):
+    response = DFResponse(request)
+    comentario = get_parameter(request, 'comentario')
+    sentimiento = Sentimiento(comentario)
+    resultado = sentimiento.clasificar()
+    if resultado == 'positivo':
+        response.sentimiento_positivo_event()
+    if resultado == 'negativo':
+        response.sentimiento_negativo_event()
+    if resultado == 'neutro':
+        response.sentimiento_neutro_event()
+    print(f"sentimiento: {resultado}")
+    return response.to_json()
+
+
+def registrar_tarjeta(request):
+    """
+        Registrar tarjeta del usuario
+    """
+    response = DFResponse(request)
+    user = get_user_context(request)
+    tarjeta = get_parameter(request, 'tarjeta')
+    save_tarjeta_usuario(user, tarjeta)
+    response.text(
+        "Genial, ahora ya puedes pagar lo que quieras con tu tarjeta!!!"
+    )
+    return response.to_json()
+
+
 def gateway(request):
     """
         Unifica la salida de los intents procesados con Webhook Telegram
@@ -164,8 +190,6 @@ def gateway(request):
         print(f"Intent invocado Telegram: {intent}")
         if intent == "Welcome":
             response = saludo(request)
-        # if intent == "PeticionCamiseta":
-        #    response = consultar_camisetas(request)
         if intent == "AgregarProducto":
             response = agregar_producto(request)
         if intent == "EliminarCarrito":
@@ -176,9 +200,10 @@ def gateway(request):
             response = tarjetas(request)
         if intent == "Comprar-tarjeta":
             response = comprar(request)
+        if intent == "Comprar-registrar-tarjeta":
+            response = registrar_tarjeta(request)
         if intent == "RegistrarUsuario":
             response = registrar_usuario(request)
-        # if intent == "PeticionPantalones" or intent == "pantalones-parameters" \
         if intent == "SolicitarProducto" or intent == "parametros-producto-talla" \
                 or intent == "parametros-producto-numero" or intent == "producto-root":
             response = consultar_productos(request)
@@ -186,4 +211,8 @@ def gateway(request):
             response = validar_parametros_producto(request)
         if intent == "Productos" or intent == "Ayuda":
             response = menu_productos(request)
+        if intent == "Productos":
+            response = menu_productos(request)
+        if intent == "Experiencia-sentimiento":
+            response = feedback_sentimiento(request)
     return response

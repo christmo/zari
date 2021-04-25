@@ -109,27 +109,11 @@ class DFResponse:
             )
         #self.response["fulfillmentMessages"] = fulfillment
 
-    def register_event(self):
-        followup = {}
-        followup["name"] = "register-event"
-        parameters = {}
-        # parameters[""]
-        followup["parameters"] = parameters
-        self.response["followupEventInput"] = followup
-
     def register_card_event(self, user: Usuario):
         followup = {}
         followup["name"] = "register-card-event"
         parameters = {}
         parameters["user"] = user.get_id()
-        followup["parameters"] = parameters
-        self.response["followupEventInput"] = followup
-
-    def presentarse_event(self):
-        followup = {}
-        followup["name"] = "presentarse_event"
-        parameters = {}
-        # parameters[""]
         followup["parameters"] = parameters
         self.response["followupEventInput"] = followup
 
@@ -152,6 +136,8 @@ class DFResponse:
         parameters = {}
         if producto.color != None and len(producto.color) > 0:
             parameters["color"] = producto.color
+        if producto.get_genero() > 0:
+            parameters["genero"] = producto.get_genero_texto()
         if producto.nombre != None and len(producto.nombre) > 0:
             parameters["producto"] = producto.nombre
         followup["parameters"] = parameters
@@ -190,6 +176,31 @@ class DFResponse:
 
     def inline_buttons(self, titulo, botones):
         tg_inline_buttons(titulo, botones, self.fulfillment)
-    
+
     def inline_buttons_vertical(self, titulo, botones):
         tg_inline_buttons_vertical(titulo, botones, self.fulfillment)
+
+    def __evento_generico(self, evento):
+        followup = {}
+        followup["name"] = evento
+        parameters = {}
+        followup["parameters"] = parameters
+        self.response["followupEventInput"] = followup
+
+    def register_event(self):
+        self.__evento_generico("register-event")
+
+    def experiencia_event(self):
+        self.__evento_generico("experiencia-event")
+
+    def presentarse_event(self):
+        self.__evento_generico("presentarse_event")
+
+    def sentimiento_positivo_event(self):
+        self.__evento_generico("sentimiento-positivo")
+
+    def sentimiento_negativo_event(self):
+        self.__evento_generico("sentimiento-negativo")
+
+    def sentimiento_neutro_event(self):
+        self.__evento_generico("sentimiento-neutro")
