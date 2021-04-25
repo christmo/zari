@@ -9,7 +9,6 @@ def consultar_productos(request):
     """
         Procesa la respuesta del Intent Pantalones
     """
-    #bot_response = request["queryResult"]["fulfillmentText"]
     response = DFResponse(request)
     producto = get_product_from_params(request)
     __cambiar_filtro_usuario(request, producto)

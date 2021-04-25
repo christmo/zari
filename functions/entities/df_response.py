@@ -25,7 +25,6 @@ class DFResponse:
         return json.dumps(self.response)
 
     def text(self, message):
-        #self.response["fulfillmentMessages"] = DFText().toText(message)
         self.fulfillment = DFText().toText(message)
 
     def init_context_usuario(self):
@@ -62,22 +61,17 @@ class DFResponse:
         )
 
     def cards(self, products):
-        #fulfillment = []
         for prod in products:
             self.fulfillment.append(prod.toCard())
-        #self.response["fulfillmentMessages"] = fulfillment
 
     def products_text(self, products):
-        #fulfillment = []
         for prod in products:
             DFText().addItem(
                 f"{prod.codigo} - {prod.nombre} - {prod.talla} - {prod.precio} - {prod.descripcion}",
                 self.fulfillment
             )
-        #self.response["fulfillmentMessages"] = fulfillment
 
     def shopping_cart_text(self, products):
-        #fulfillment = []
         total = 0
         numero = 0
         if len(products) > 0:
@@ -107,7 +101,6 @@ class DFResponse:
                 'busca lo que te guste y pulsa el botón de "Agregar al Carrito".',
                 self.fulfillment
             )
-        #self.response["fulfillmentMessages"] = fulfillment
 
     def register_card_event(self, user: Usuario):
         followup = {}

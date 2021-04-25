@@ -9,7 +9,6 @@ def consultar_productos(request):
     """
         Procesa la respuesta del Intent Pantalones
     """
-    #bot_response = request["queryResult"]["fulfillmentText"]
     response = DFResponse(request)
     producto = get_product_from_params(request)
     __cambiar_filtro_usuario(request, producto)
@@ -86,7 +85,6 @@ def validar_parametros_producto(request):
     """
         Validar parametros Producto
     """
-    #bot_response = request["queryResult"]["fulfillmentText"]
     response = DFResponse(request)
     producto = get_product_from_params(request)
     __cambiar_filtro_usuario(request, producto)
@@ -97,8 +95,12 @@ def validar_parametros_producto(request):
         if len(products) > 0:
             response.cards(products)
         else:
-            response.text(f'No encontré productos de este tipo {producto.nombre}'
-                          f' de color {producto.color}, para {producto.get_genero_texto()} de talla {producto.talla}')
+            if producto.tipo == 5:
+                response.text(f'No encontré productos de este tipo {producto.nombre} '
+                              f'de color {producto.color}, para {producto.get_genero_texto()} de número {producto.numero}')
+            else:
+                response.text(f'No encontré productos de este tipo {producto.nombre} '
+                              f'de color {producto.color}, para {producto.get_genero_texto()} de talla {producto.talla}')
     else:
         print("Completar parametros del producto Talla y Genero del cliente!!!")
         if producto.nombre == 'zapatos':

@@ -43,7 +43,6 @@ def agregar_producto(request):
             '\n\nPara empezar tu registro dime "zari agregame como cliente"'
             '\n(Si al iniciar no quieres continuar siempre me puedes decir "cancelar" y detendré las preguntas)'
         )
-        # response.register_event()
     return response.to_json()
 
 
@@ -51,7 +50,6 @@ def eliminar_carrito(request):
     """
         Proceso para desactivar el carrito de compras enviado, y generar uno nuevo
     """
-    #bot_response = request["queryResult"]["fulfillmentText"]
     response = DFResponse(request)
     car = get_carrito_context(request)
     result = limpiar_carrito(car.id_car)
