@@ -9,7 +9,6 @@ def consultar_productos(request):
     """
         Procesa la respuesta del Intent Pantalones
     """
-    #bot_response = request["queryResult"]["fulfillmentText"]
     response = DFResponse(request)
     producto = get_product_from_params(request)
     __cambiar_filtro_usuario(request, producto)
@@ -67,12 +66,12 @@ def __cambiar_filtro_usuario(request, producto: Producto):
     user = get_user_context(request)
     if user != None and user.is_full():
         print(user)
-        if producto.talla != None and len(producto.talla) == 0:
+        if producto.talla == None or len(producto.talla) == 0:
             if producto.tipo == 1 or producto.tipo == 4 or producto.tipo == 6:
                 producto.talla = user.get_talla_pantalon()
             if producto.tipo == 2 or producto.tipo == 3 or producto.tipo == 7:
                 producto.talla = user.get_talla_polera()
-        if producto.numero != None and producto.numero == 0:
+        if producto.numero == None or producto.numero == 0:
             producto.numero = user.get_talla_calzado()
         else:
             print('Se toma la talla del producto buscado no del cliente')
@@ -86,7 +85,6 @@ def validar_parametros_producto(request):
     """
         Validar parametros Producto
     """
-    #bot_response = request["queryResult"]["fulfillmentText"]
     response = DFResponse(request)
     producto = get_product_from_params(request)
     __cambiar_filtro_usuario(request, producto)
@@ -97,8 +95,12 @@ def validar_parametros_producto(request):
         if len(products) > 0:
             response.cards(products)
         else:
-            response.text(f'No encontré productos de este tipo {producto.nombre}'
-                          f' de color {producto.color}, para {producto.get_genero_texto()} de talla {producto.talla}')
+            if producto.tipo == 5:
+                response.text(f'No encontré productos de este tipo {producto.nombre} '
+                              f'de color {producto.color}, para {producto.get_genero_texto()} de número {producto.numero}')
+            else:
+                response.text(f'No encontré productos de este tipo {producto.nombre} '
+                              f'de color {producto.color}, para {producto.get_genero_texto()} de talla {producto.talla}')
     else:
         print("Completar parametros del producto Talla y Genero del cliente!!!")
         if producto.nombre == 'zapatos':
@@ -113,4 +115,21 @@ def menu_productos(request):
     response = DFResponse(request)
     response.inline_buttons_vertical("Tengo estas opciones que te pueden interesar.",
                                      ["👖 ver pantalones", "👕 ver camisetas", "👗 ver vestidos", "👟 ver zapatos"])
+    return response.to_json()
+
+def promociones(request):
+    """
+        Busqueda de promociones
+    """
+    response = DFResponse(request)
+    producto = get_product_from_params(request)
+    __cambiar_filtro_usuario(request, producto)
+    print(producto)
+    products = query.promociones(producto)
+    print(f"Numero de productos encontrados: {len(products)}")
+    if len(products) > 0:
+        response.cards(products)
+    else:
+        response.text('No encontré promociones para hoy')
+
     return response.to_json()

@@ -32,11 +32,5 @@ def zari_webhook(request):
             return general.gateway(request_json)
     else:
         text = "Respuesta sin procesar"
-        #user = Usuario("christmo")
-        #user.id(3)
-        #prod = Producto("pantalones", "M", "azul", 1)
-        #prod.costo = 62.7
-        #prod.codigo = 100
-        #save_shopping_car(user, prod)
 
     return respuesta(text)

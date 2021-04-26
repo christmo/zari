@@ -25,7 +25,6 @@ class DFResponse:
         return json.dumps(self.response)
 
     def text(self, message):
-        #self.response["fulfillmentMessages"] = DFText().toText(message)
         self.fulfillment = DFText().toText(message)
 
     def init_context_usuario(self):
@@ -62,22 +61,17 @@ class DFResponse:
         )
 
     def cards(self, products):
-        #fulfillment = []
         for prod in products:
             self.fulfillment.append(prod.toCard())
-        #self.response["fulfillmentMessages"] = fulfillment
 
     def products_text(self, products):
-        #fulfillment = []
         for prod in products:
             DFText().addItem(
                 f"{prod.codigo} - {prod.nombre} - {prod.talla} - {prod.precio} - {prod.descripcion}",
                 self.fulfillment
             )
-        #self.response["fulfillmentMessages"] = fulfillment
 
     def shopping_cart_text(self, products):
-        #fulfillment = []
         total = 0
         numero = 0
         if len(products) > 0:
@@ -107,29 +101,12 @@ class DFResponse:
                 'busca lo que te guste y pulsa el botón de "Agregar al Carrito".',
                 self.fulfillment
             )
-        #self.response["fulfillmentMessages"] = fulfillment
-
-    def register_event(self):
-        followup = {}
-        followup["name"] = "register-event"
-        parameters = {}
-        # parameters[""]
-        followup["parameters"] = parameters
-        self.response["followupEventInput"] = followup
 
     def register_card_event(self, user: Usuario):
         followup = {}
         followup["name"] = "register-card-event"
         parameters = {}
         parameters["user"] = user.get_id()
-        followup["parameters"] = parameters
-        self.response["followupEventInput"] = followup
-
-    def presentarse_event(self):
-        followup = {}
-        followup["name"] = "presentarse_event"
-        parameters = {}
-        # parameters[""]
         followup["parameters"] = parameters
         self.response["followupEventInput"] = followup
 
@@ -152,6 +129,8 @@ class DFResponse:
         parameters = {}
         if producto.color != None and len(producto.color) > 0:
             parameters["color"] = producto.color
+        if producto.get_genero() > 0:
+            parameters["genero"] = producto.get_genero_texto()
         if producto.nombre != None and len(producto.nombre) > 0:
             parameters["producto"] = producto.nombre
         followup["parameters"] = parameters
@@ -190,6 +169,31 @@ class DFResponse:
 
     def inline_buttons(self, titulo, botones):
         tg_inline_buttons(titulo, botones, self.fulfillment)
-    
+
     def inline_buttons_vertical(self, titulo, botones):
         tg_inline_buttons_vertical(titulo, botones, self.fulfillment)
+
+    def __evento_generico(self, evento):
+        followup = {}
+        followup["name"] = evento
+        parameters = {}
+        followup["parameters"] = parameters
+        self.response["followupEventInput"] = followup
+
+    def register_event(self):
+        self.__evento_generico("register-event")
+
+    def experiencia_event(self):
+        self.__evento_generico("experiencia-event")
+
+    def presentarse_event(self):
+        self.__evento_generico("presentarse_event")
+
+    def sentimiento_positivo_event(self):
+        self.__evento_generico("sentimiento-positivo")
+
+    def sentimiento_negativo_event(self):
+        self.__evento_generico("sentimiento-negativo")
+
+    def sentimiento_neutro_event(self):
+        self.__evento_generico("sentimiento-neutro")

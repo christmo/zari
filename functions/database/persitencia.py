@@ -1,3 +1,4 @@
+from entities.tarjeta import Tarjeta
 from entities.db_usuario import DBUsuario
 from entities.producto import Producto
 from entities.usuario import Usuario
@@ -6,6 +7,7 @@ from database import conexion as pgsql
 from sqlalchemy.orm import sessionmaker
 from entities.carrito import Carrito
 from sqlalchemy import and_
+from random import randint
 import datetime
 
 
@@ -66,3 +68,25 @@ def save_usuario(user: DBUsuario):
     session.commit()
     print(f'usuario guardado se devuelve: {user.id_usuario}')
     return user
+
+
+def save_tarjeta_usuario(user: Usuario, tarjeta_numero):
+    # pylint: disable=maybe-no-member
+    engine = pgsql.init_connection_engine()
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    tarjeta = Tarjeta()
+    tarjeta.numero = tarjeta_numero
+    tarjeta.id_usuario = user.get_id()
+    tarjeta.marca = __marca_tarjeta_generador()
+    session.add(tarjeta)
+    session.commit()
+
+
+def __marca_tarjeta_generador():
+    marca = {
+        0: "Visa 🔵",
+        1: "Mastercard 🔴"
+    }
+    random = randint(0, 1)
+    return marca[random]
