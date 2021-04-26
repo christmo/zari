@@ -1,5 +1,5 @@
 from services.sentimiento import Sentimiento
-from telegram.productos import consultar_productos, menu_productos, validar_parametros_producto
+from telegram.productos import consultar_productos, menu_productos, promociones, validar_parametros_producto
 from database.command import limpiar_carrito, pagar_carrito
 from database.persitencia import save_shopping_car, save_tarjeta_usuario, save_usuario
 from entities.df_context import get_carrito_context, get_user_context
@@ -126,7 +126,7 @@ def comprar(request):
                 f"en tu dirección registrada: {orden.direccion}"
             )
             response.inline_buttons("🤔 Si quieres puedes calificarme: ",
-                                    ["⭐ Experiencia"])
+                                    ["⭐ Experiencia", "🛍️ Promociones"])
         else:
             response.text("No haz agregado nada a tu carrito, no se hizo ningún cargo a tu tarjeta.")
     else:
@@ -215,4 +215,6 @@ def gateway(request):
             response = menu_productos(request)
         if intent == "Experiencia-sentimiento":
             response = feedback_sentimiento(request)
+        if intent == "Promociones":
+            response = promociones(request)
     return response

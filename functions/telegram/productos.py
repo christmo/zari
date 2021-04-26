@@ -116,3 +116,20 @@ def menu_productos(request):
     response.inline_buttons_vertical("Tengo estas opciones que te pueden interesar.",
                                      ["👖 ver pantalones", "👕 ver camisetas", "👗 ver vestidos", "👟 ver zapatos"])
     return response.to_json()
+
+def promociones(request):
+    """
+        Busqueda de promociones
+    """
+    response = DFResponse(request)
+    producto = get_product_from_params(request)
+    __cambiar_filtro_usuario(request, producto)
+    print(producto)
+    products = query.promociones(producto)
+    print(f"Numero de productos encontrados: {len(products)}")
+    if len(products) > 0:
+        response.cards(products)
+    else:
+        response.text('No encontré promociones para hoy')
+
+    return response.to_json()

@@ -2,7 +2,7 @@ from entities.carrito import Carrito
 from entities.producto import Producto
 from entities.usuario import Usuario
 from database import conexion as pgsql
-
+from random import randint
 
 def usuario(username):
     sql = f"""
@@ -108,3 +108,42 @@ where t.id_usuario = {user.get_id()}
         tarjetas = conn.execute(sql).fetchall()
         user.set_tarjetas([tarjeta[0] for tarjeta in tarjetas])
     return user
+
+
+def promociones(producto: Producto):
+    ids = [f"{randint(1,500)}" for i in range(10)]
+    str_ids = ",".join(ids)
+    sql = """
+select p.nombre_producto, p.talla, p.color, TO_NUMBER(p.precio, 'L99999.99') precio, p.url_imagen, c.descripcion, 
+t.descripcion, p.id_producto, p.id_genero
+from producto p, categoria_producto c, tipo_producto t
+where p.id_categoria_producto = c.id_categoria_producto
+and t.id_tipo_producto = c.id_tipo_producto
+and p.precio is not null """
+    if producto != None:
+        sql = sql + f"and p.id_producto in ({str_ids}) "
+        if producto.get_genero() != None and producto.get_genero() > 0:
+            sql = sql + f"and p.id_genero = {producto.get_genero()} "
+        #if producto.numero != None and producto.numero > 0:
+        #    if producto.talla != None and len(producto.talla) > 0:
+        #        sql = sql + f"and (p.talla = '{producto.numero}' or p.talla = '{producto.talla}')"
+        #    else:
+        #        sql = sql + f"and p.talla = '{producto.numero}'"
+        #else:
+        #    if producto.talla != None and len(producto.talla) > 0:
+        #        sql = sql + f"and p.talla = '{producto.talla}' "
+    print(sql)
+    products = []
+    db = pgsql.init_connection_engine()
+    with db.connect() as conn:
+        productos = conn.execute(sql).fetchall()
+        for prod in productos:
+            p = Producto(prod[0], prod[1], prod[2], producto.tipo)
+            p.precio = prod[3]
+            p.image = prod[4]
+            p.descripcion = prod[6]
+            p.codigo = prod[7]
+            p.genero(prod[8])
+            products.append(p)
+
+    return products
