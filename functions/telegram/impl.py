@@ -43,7 +43,7 @@ def agregar_producto(request):
             f"Productos en el carrito {len(car.detalles)} por un total de {car.total}€")
         response.context_shoppingcar(car)
         response.inline_buttons("🤔 Te puedo llevar a ", [
-                                "💶 Pagar", "🛒 Ver Carrito"])
+                                "💶 Pagar", "🛒 Ver Carrito", "🎁 Productos"])
     else:
         print('Enviar a registrar al cliente')
         response.text(
